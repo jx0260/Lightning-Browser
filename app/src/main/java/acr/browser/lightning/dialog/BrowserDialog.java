@@ -16,6 +16,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -25,6 +26,7 @@ import java.util.List;
 import acr.browser.lightning.R;
 import acr.browser.lightning.utils.DeviceUtils;
 import acr.browser.lightning.utils.ResourceUtils;
+import acr.browser.lightning.utils.Utils;
 
 /**
  * Copyright 7/31/2016 Anthony Restaino

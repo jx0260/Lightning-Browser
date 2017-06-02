@@ -19,7 +19,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
-import android.webkit.CookieManager;
+import com.tencent.smtt.sdk.CookieManager;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 

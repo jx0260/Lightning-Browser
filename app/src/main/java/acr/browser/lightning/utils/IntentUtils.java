@@ -11,7 +11,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.webkit.WebView;
+import com.tencent.smtt.sdk.WebView;
 
 import java.net.URISyntaxException;
 import java.util.List;
@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
+import acr.browser.lightning.controller.UIController;
 
 public class IntentUtils {
 

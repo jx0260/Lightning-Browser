@@ -5,12 +5,12 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.Menu;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
+import com.tencent.smtt.sdk.CookieSyncManager;
 
 import com.anthonycr.bonsai.Completable;
 import com.anthonycr.bonsai.CompletableAction;
 import com.anthonycr.bonsai.CompletableSubscriber;
+import com.tencent.smtt.sdk.CookieManager;
 
 import acr.browser.lightning.R;
 

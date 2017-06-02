@@ -4,14 +4,14 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
-import android.webkit.WebIconDatabase;
-import android.webkit.WebStorage;
-import android.webkit.WebView;
-import android.webkit.WebViewDatabase;
+import com.tencent.smtt.sdk.WebView;
+import com.tencent.smtt.sdk.WebViewDatabase;
 
 import com.anthonycr.bonsai.Schedulers;
+import com.tencent.smtt.sdk.CookieManager;
+import com.tencent.smtt.sdk.CookieSyncManager;
+import com.tencent.smtt.sdk.WebIconDatabase;
+import com.tencent.smtt.sdk.WebStorage;
 
 import acr.browser.lightning.database.history.HistoryModel;
 

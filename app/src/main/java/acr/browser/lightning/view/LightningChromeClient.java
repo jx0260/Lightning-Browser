@@ -13,14 +13,15 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.webkit.GeolocationPermissions;
-import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
 
 import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
+import com.tencent.smtt.export.external.interfaces.GeolocationPermissionsCallback;
+import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient;
+import com.tencent.smtt.sdk.ValueCallback;
+import com.tencent.smtt.sdk.WebChromeClient;
+import com.tencent.smtt.sdk.WebView;
 
 import javax.inject.Inject;
 
@@ -99,6 +100,48 @@ public class LightningChromeClient extends WebChromeClient {
     }
 
     @Override
+    public void onGeolocationPermissionsShowPrompt(final String origin, final GeolocationPermissionsCallback callback) {
+        PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(mActivity, PERMISSIONS, new PermissionsResultAction() {
+            @Override
+            public void onGranted() {
+                final boolean remember = true;
+                AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+                builder.setTitle(mActivity.getString(R.string.location));
+                String org;
+                if (origin.length() > 50) {
+                    org = origin.subSequence(0, 50) + "...";
+                } else {
+                    org = origin;
+                }
+                builder.setMessage(org + mActivity.getString(R.string.message_location))
+                        .setCancelable(true)
+                        .setPositiveButton(mActivity.getString(R.string.action_allow),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        callback.invoke(origin, true, remember);
+                                    }
+                                })
+                        .setNegativeButton(mActivity.getString(R.string.action_dont_allow),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        callback.invoke(origin, false, remember);
+                                    }
+                                });
+                AlertDialog alert = builder.create();
+                alert.show();
+                BrowserDialog.setDialogSize(mActivity, alert);
+            }
+
+            @Override
+            public void onDenied(String permission) {
+                //TODO show message and/or turn off setting
+            }
+        });
+    }
+
+    /*@Override
     public void onGeolocationPermissionsShowPrompt(@NonNull final String origin,
                                                    @NonNull final GeolocationPermissions.Callback callback) {
         PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(mActivity, PERMISSIONS, new PermissionsResultAction() {
@@ -139,7 +182,7 @@ public class LightningChromeClient extends WebChromeClient {
                 //TODO show message and/or turn off setting
             }
         });
-    }
+    }*/
 
     @Override
     public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture,
@@ -207,14 +250,14 @@ public class LightningChromeClient extends WebChromeClient {
     }
 
     @Override
-    public void onShowCustomView(View view, CustomViewCallback callback) {
+    public void onShowCustomView(View view, IX5WebChromeClient.CustomViewCallback callback) {
         mUIController.onShowCustomView(view, callback);
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public void onShowCustomView(View view, int requestedOrientation,
-                                 CustomViewCallback callback) {
+                                 IX5WebChromeClient.CustomViewCallback callback) {
         mUIController.onShowCustomView(view, callback, requestedOrientation);
     }
 }

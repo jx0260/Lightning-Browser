@@ -11,8 +11,9 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient.CustomViewCallback;
+import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient.CustomViewCallback;
+
+import com.tencent.smtt.sdk.ValueCallback;
 
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.database.HistoryItem;

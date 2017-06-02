@@ -8,6 +8,8 @@ import android.support.annotation.IntDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import acr.browser.lightning.BuildConfig;
+
 public final class Constants {
 
     private Constants() {

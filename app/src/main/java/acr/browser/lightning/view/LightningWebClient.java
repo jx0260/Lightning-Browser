@@ -2,7 +2,6 @@ package acr.browser.lightning.view;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,15 +16,15 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.webkit.HttpAuthHandler;
-import android.webkit.SslErrorHandler;
-import android.webkit.ValueCallback;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.tencent.smtt.export.external.interfaces.HttpAuthHandler;
+import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
+import com.tencent.smtt.export.external.interfaces.WebResourceResponse;
+import com.tencent.smtt.sdk.ValueCallback;
+import com.tencent.smtt.sdk.WebView;
+import com.tencent.smtt.sdk.WebViewClient;
 
 import java.io.ByteArrayInputStream;
 import java.net.URISyntaxException;
@@ -71,7 +70,7 @@ public class LightningWebClient extends WebViewClient {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
-    public WebResourceResponse shouldInterceptRequest(WebView view, @NonNull WebResourceRequest request) {
+    public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
         if (mAdBlock.isAd(request.getUrl().toString())) {
             ByteArrayInputStream EMPTY = new ByteArrayInputStream("".getBytes());
             return new WebResourceResponse("text/plain", "utf-8", EMPTY);
@@ -216,38 +215,40 @@ public class LightningWebClient extends WebViewClient {
         return errorCodeMessageCodes;
     }
 
-    @Override
-    public void onReceivedSslError(WebView view, @NonNull final SslErrorHandler handler, @NonNull SslError error) {
-        List<Integer> errorCodeMessageCodes = getAllSslErrorMessageCodes(error);
 
-        StringBuilder stringBuilder = new StringBuilder();
-        for (Integer messageCode : errorCodeMessageCodes) {
-            stringBuilder.append(" - ").append(mActivity.getString(messageCode)).append('\n');
-        }
-        String alertMessage =
-            mActivity.getString(R.string.message_insecure_connection, stringBuilder.toString());
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        builder.setTitle(mActivity.getString(R.string.title_warning));
-        builder.setMessage(alertMessage)
-            .setCancelable(true)
-            .setPositiveButton(mActivity.getString(R.string.action_yes),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        handler.proceed();
-                    }
-                })
-            .setNegativeButton(mActivity.getString(R.string.action_no),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        handler.cancel();
-                    }
-                });
-        Dialog dialog = builder.show();
-        BrowserDialog.setDialogSize(mActivity, dialog);
-    }
+//    @Override
+//    public void onReceivedSslError(WebView view, @NonNull final SslErrorHandler handler, @NonNull com.tencent.smtt.export.external.interfaces.SslError error) {
+//        List<Integer> errorCodeMessageCodes = getAllSslErrorMessageCodes(error);
+//
+//        StringBuilder stringBuilder = new StringBuilder();
+//        for (Integer messageCode : errorCodeMessageCodes) {
+//            stringBuilder.append(" - ").append(mActivity.getString(messageCode)).append('\n');
+//        }
+//        String alertMessage =
+//            mActivity.getString(R.string.message_insecure_connection, stringBuilder.toString());
+//
+//        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+//        builder.setTitle(mActivity.getString(R.string.title_warning));
+//        builder.setMessage(alertMessage)
+//            .setCancelable(true)
+//            .setPositiveButton(mActivity.getString(R.string.action_yes),
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        handler.proceed();
+//                    }
+//                })
+//            .setNegativeButton(mActivity.getString(R.string.action_no),
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        handler.cancel();
+//                    }
+//                });
+//        Dialog dialog = builder.show();
+//        BrowserDialog.setDialogSize(mActivity, dialog);
+//    }
 
     @Override
     public void onFormResubmission(WebView view, @NonNull final Message dontResend, @NonNull final Message resend) {
@@ -274,11 +275,11 @@ public class LightningWebClient extends WebViewClient {
         BrowserDialog.setDialogSize(mActivity, alert);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    @Override
-    public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull WebResourceRequest request) {
-        return shouldOverrideLoading(view, request.getUrl().toString()) || super.shouldOverrideUrlLoading(view, request);
-    }
+//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+//    @Override
+//    public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull WebResourceRequest request) {
+//        return shouldOverrideLoading(view, request.getUrl().toString()) || super.shouldOverrideUrlLoading(view, request);
+//    }
 
     @SuppressWarnings("deprecation")
     @Override
