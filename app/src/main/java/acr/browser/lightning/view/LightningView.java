@@ -7,18 +7,23 @@ package acr.browser.lightning.view;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
@@ -26,20 +31,22 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import com.tencent.smtt.sdk.CookieManager;
-import com.tencent.smtt.sdk.WebSettings;
-import com.tencent.smtt.sdk.WebSettings.LayoutAlgorithm;
-import com.tencent.smtt.sdk.WebSettings.PluginState;
-import com.tencent.smtt.sdk.WebView;
+import android.webkit.JavascriptInterface;
 
 import com.anthonycr.bonsai.Schedulers;
 import com.anthonycr.bonsai.Single;
 import com.anthonycr.bonsai.SingleAction;
 import com.anthonycr.bonsai.SingleOnSubscribe;
 import com.anthonycr.bonsai.SingleSubscriber;
+import com.tencent.smtt.sdk.CookieManager;
+import com.tencent.smtt.sdk.WebSettings;
+import com.tencent.smtt.sdk.WebSettings.LayoutAlgorithm;
+import com.tencent.smtt.sdk.WebSettings.PluginState;
+import com.tencent.smtt.sdk.WebView;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -53,6 +60,9 @@ import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.udp.OnlineEnum;
+import acr.browser.lightning.udp.StudentOnlineMsg;
+import acr.browser.lightning.udp.UDPMonitorService;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.UrlUtils;
@@ -142,6 +152,9 @@ public class LightningView {
         mWebView.setDownloadListener(new LightningDownloadListener(activity));
         mGestureDetector = new GestureDetector(activity, new CustomGestureListener());
         mWebView.setOnTouchListener(new TouchListener());
+
+        mWebView.addJavascriptInterface(new JsInterfaceClass(), "nativeClient");
+
         sDefaultUserAgent = mWebView.getSettings().getUserAgentString();
         initializeSettings();
         initializePreferences(activity);
@@ -1221,6 +1234,98 @@ public class LightningView {
             if (view != null) {
                 view.longClickPage(url);
             }
+        }
+    }
+
+    public class JsInterfaceClass {
+
+        @JavascriptInterface
+        public String getIp(){
+            return getLocalNetIp();
+        }
+
+        @JavascriptInterface
+        public void studentEnterClass(String multicastIp, String realName, String userName, String stuImg) {
+            multicastIp = "239.0.0.1";
+            iamOnline(multicastIp, realName, userName, stuImg);
+        }
+
+        /**
+         * 老子上线了！
+         *
+         * @param realName
+         * @param userName
+         * @param stuImg
+         */
+        private void iamOnline(String multicastIp, String realName, String userName, String stuImg) {
+            StudentOnlineMsg studentOnlineMsg = new StudentOnlineMsg();
+            studentOnlineMsg.setrName(realName);
+            studentOnlineMsg.setuName(userName);
+            studentOnlineMsg.setImg(stuImg);
+
+            studentOnlineMsg.setState(OnlineEnum.ON_LINE.getVal());
+            studentOnlineMsg.setIp(getLocalNetIp());
+            studentOnlineMsg.setWidth(getScreenSize()[0]);
+            studentOnlineMsg.setHeight(getScreenSize()[1]);
+
+            Intent onlineIntent = new Intent(mActivity, UDPMonitorService.class);
+            onlineIntent.putExtra("studentMsg", studentOnlineMsg);
+            onlineIntent.putExtra("multicastIp", multicastIp);
+            mActivity.startService(onlineIntent);
+        }
+
+        /**
+         * 获取本机ip
+         *
+         * @return
+         */
+        private String getLocalNetIp() {
+            //获取wifi服务
+            WifiManager wifiManager = (WifiManager) mActivity.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            //判断wifi是否开启
+            if (!wifiManager.isWifiEnabled()) {
+                wifiManager.setWifiEnabled(true);
+            }
+            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+            int ipAddress = wifiInfo.getIpAddress();
+            return intToIp(ipAddress);
+        }
+
+        private String intToIp(int i) {
+            return (i & 0xFF) + "." +
+                    ((i >> 8) & 0xFF) + "." +
+                    ((i >> 16) & 0xFF) + "." +
+                    (i >> 24 & 0xFF);
+        }
+
+        private int[] getScreenSize() {
+            DisplayMetrics metrics = new DisplayMetrics();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                mActivity.getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
+                return new int[]{metrics.widthPixels, metrics.heightPixels};
+            } else {
+                return getAccurateScreenPixel();
+            }
+        }
+
+        /**
+         * 获取精确的屏幕大小
+         */
+        public int[] getAccurateScreenPixel()
+        {
+            int[] screenWH = new int[2];
+            Display display = mActivity.getWindowManager().getDefaultDisplay();
+            DisplayMetrics dm = new DisplayMetrics();
+            try {
+                Class<?> c = Class.forName("android.view.Display");
+                Method method = c.getMethod("getRealMetrics",DisplayMetrics.class);
+                method.invoke(display, dm);
+                screenWH[0] = dm.widthPixels;
+                screenWH[1] = dm.heightPixels;
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            return screenWH;
         }
     }
 }

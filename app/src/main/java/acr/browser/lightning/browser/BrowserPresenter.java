@@ -10,6 +10,10 @@ import android.util.Log;
 import com.anthonycr.bonsai.CompletableOnSubscribe;
 import com.anthonycr.bonsai.Schedulers;
 
+import net.chinaedu.aedu.utils.LogUtils;
+
+import java.io.File;
+
 import javax.inject.Inject;
 
 import acr.browser.lightning.BuildConfig;
@@ -19,16 +23,20 @@ import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.preference.PreferenceManager;
-
+import acr.browser.lightning.utils.DownloadManager;
 import acr.browser.lightning.utils.UrlUtils;
+import acr.browser.lightning.version.entity.VersionEntity;
+import acr.browser.lightning.version.view.VersionChecker;
 import acr.browser.lightning.view.LightningView;
+import io.reactivex.disposables.Disposable;
+import zlc.season.rxdownload2.entity.DownloadStatus;
 
 /**
  * Presenter in charge of keeping track of
  * the current tab and setting the current tab
  * of the
  */
-public class BrowserPresenter {
+public class BrowserPresenter implements IBrowserPresenter{
 
     private static final String TAG = "BrowserPresenter";
 
@@ -52,6 +60,8 @@ public class BrowserPresenter {
                 mView.updateTabNumber(newNumber);
             }
         });
+
+        this.mDownloadManager = new DownloadManager((Activity) mView);
     }
 
     /**
@@ -359,5 +369,68 @@ public class BrowserPresenter {
     public void onAppLowMemory() {
         mTabsModel.freeMemory();
     }
+
+
+
+
+    // =======   检查更新   =================
+
+    private DownloadManager mDownloadManager;
+    private VersionEntity mVersionEntity;
+
+    @Override
+    public void checkVersion() {
+        VersionChecker.create((Activity)mView).check(new VersionChecker.OnCheckResultListener() {
+            @Override
+            public void onSuccess(VersionEntity entity) {
+                mView.onCheckVersionSuccess(entity);
+            }
+
+            @Override
+            public void onFailure(Throwable e) {
+                mView.onCheckVersionFailed(e);
+            }
+        });
+    }
+
+    @Override
+    public void startDownload(VersionEntity entity) {
+        this.mVersionEntity = entity;
+        mDownloadManager.startDownload((Activity)mView, entity.getMobileVersionUrl(), new DownloadManager.DownloadListener() {
+            @Override
+            public void onStart(Disposable d) {
+                mView.onStartDownload();
+            }
+
+            @Override
+            public void onProgress(DownloadStatus status) {
+                LogUtils.d("getDownloadSize=" + status.getDownloadSize());
+                int progress = (int) (1.0f * 100 * status.getDownloadSize() / status.getTotalSize());
+                LogUtils.d("currentProgress=" + progress);
+                mView.onDownloadProgress(progress);
+            }
+
+            @Override
+            public void onSuccess(File dest) {
+                mView.onDownloadSucess(dest.getAbsolutePath());
+                mVersionEntity = null;
+            }
+
+            @Override
+            public void onFailure(Throwable e) {
+                LogUtils.d("onFailure=" + e.getMessage());
+                mView.onDownloadError(e);
+                mVersionEntity = null;
+            }
+        });
+    }
+
+    @Override
+    public void stopDownload() {
+        if (null != mVersionEntity) {
+            mDownloadManager.stopDownload(mVersionEntity.getMobileVersionUrl());
+        }
+    }
+
 
 }

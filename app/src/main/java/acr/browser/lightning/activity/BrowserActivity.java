@@ -29,6 +29,7 @@ import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.BuildConfig;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
@@ -58,6 +59,7 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -68,6 +70,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -83,6 +86,8 @@ import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient.CustomView
 import com.tencent.smtt.sdk.ValueCallback;
 import com.tencent.smtt.sdk.WebIconDatabase;
 import com.tencent.smtt.sdk.WebView;
+
+import net.chinaedu.aedu.utils.LogUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -110,6 +115,7 @@ import acr.browser.lightning.interpolator.BezierDecelerateInterpolator;
 import acr.browser.lightning.receiver.NetworkReceiver;
 import acr.browser.lightning.search.SuggestionsAdapter;
 import acr.browser.lightning.utils.DrawableUtils;
+import acr.browser.lightning.utils.Installer;
 import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ProxyUtils;
@@ -117,9 +123,11 @@ import acr.browser.lightning.utils.ThemeUtils;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
 import acr.browser.lightning.utils.WebUtils;
+import acr.browser.lightning.version.entity.VersionEntity;
 import acr.browser.lightning.view.Handlers;
 import acr.browser.lightning.view.LightningView;
 import acr.browser.lightning.view.SearchView;
+import acr.browser.lightning.widget.VersionCheckerDialog;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -141,6 +149,17 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @BindView(R.id.toolbar_layout) ViewGroup mToolbarLayout;
     @BindView(R.id.progress_view) AnimatedProgressBar mProgressBar;
     @BindView(R.id.search_bar) RelativeLayout mSearchBar;
+
+    @BindView(R.id.tv_splash_download_sheet_app_version)
+    TextView mDownloadSheetAppVersionTv;
+    @BindView(R.id.tv_splash_download_notification_title)
+    TextView mDownloadNotificationTitleTv;
+    @BindView(R.id.tv_splash_notificationPercent)
+    TextView mNotificationPercentTv;
+    @BindView(R.id.pb_splash_download_notification_progress)
+    ProgressBar mDownloadNotificationProgressPb;
+    @BindView(R.id.rl_splash_download_sheet)
+    RelativeLayout mDownloadSheetRl;
 
     // Toolbar Views
     @BindView(R.id.toolbar) Toolbar mToolbar;
@@ -419,6 +438,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             setIntent(null);
             mProxyUtils.checkForProxy(this);
         }
+
+        mPresenter.checkVersion();
     }
 
     @IdRes
@@ -794,6 +815,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     Utils.showSnackbar(this, R.string.message_link_copied);
                 }
                 return true;
+
+            // 浏览器设置
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
@@ -2260,4 +2283,85 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    // =====  检查更新   =============
+
+    @Override
+    public void onCheckVersionSuccess(final VersionEntity entity) {
+        if (null == entity || entity.getVersionCode() <= BuildConfig.VERSION_CODE) {
+            handleNoUpdate();
+            return;
+        }
+        entity.setMustUpdate(2);
+        VersionCheckerDialog dialog = new VersionCheckerDialog(this, entity);
+        dialog.setOnClickListener(new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (0 == which) {
+                    mDownloadSheetRl.setVisibility(View.VISIBLE);
+                    mDownloadSheetAppVersionTv.setText(entity.getMobileVersion());
+                    mDownloadNotificationTitleTv.setText(getResources().getString(R.string.app_name) + "正在下载");
+                    Animation animation = AnimationUtils.loadAnimation(BrowserActivity.this, R.anim.slide_in_right);
+                    animation.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            mPresenter.startDownload(entity);
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
+                    mDownloadSheetRl.startAnimation(animation);
+                } else {
+                    handleCancelUpdate(dialog);
+                }
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    @Override
+    public void onCheckVersionFailed(Throwable e) {
+        handleVersionCheckError(e);
+    }
+
+    @Override
+    public void onStartDownload() {
+    }
+
+    @Override
+    public void onDownloadError(Throwable e) {
+        handleVersionCheckError(e);
+    }
+
+    @Override
+    public void onDownloadProgress(int progress) {
+        mNotificationPercentTv.setText(progress + "%");
+        mDownloadNotificationProgressPb.setProgress(progress);
+    }
+
+    @Override
+    public void onDownloadSucess(String file) {
+        LogUtils.d("onSuccess=" + file);
+        Installer.install(this, file);
+    }
+
+    private void handleNoUpdate() {
+        //没有版本更新时，暂不处理
+    }
+
+    private void handleCancelUpdate(DialogInterface dialog) {
+        dialog.dismiss();
+    }
+
+    private void handleVersionCheckError(Throwable e) {
+        e.printStackTrace();
+    }
 }

@@ -405,7 +405,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         if (!mHomepage.startsWith(Constants.ABOUT)) {
             currentHomepage = mHomepage;
         } else {
-            currentHomepage = "https://www.google.com";
+            currentHomepage = "http://218.25.139.161:10046/sunrise/login/login.do";
         }
 
         BrowserDialog.showEditText(mActivity,

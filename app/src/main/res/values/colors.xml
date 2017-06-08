@@ -37,4 +37,6 @@
 
     <color name="error_red">#F44336</color>
 
+
+    <color name="common_main_color_green">#21c483</color>
 </resources>

@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.view.View;
 
+import acr.browser.lightning.version.entity.VersionEntity;
+
 public interface BrowserView {
 
     void setTabView(@NonNull View view);
@@ -36,5 +38,19 @@ public interface BrowserView {
     void notifyTabViewChanged(int position);
 
     void notifyTabViewInitialized();
+
+    // =======  检查更新    ==============
+
+    void onCheckVersionSuccess(VersionEntity entity);
+
+    void onStartDownload();
+
+    void onDownloadProgress(int progress);
+
+    void onDownloadSucess(String file);
+
+    void onCheckVersionFailed(Throwable e);
+
+    void onDownloadError(Throwable e);
 
 }

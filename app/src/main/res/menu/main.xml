@@ -20,7 +20,7 @@
     <item
         android:id="@+id/action_new_tab"
         android:title="@string/action_new_tab"/>
-    <item
+    <!--<item
         android:id="@+id/action_incognito"
         android:title="@string/action_incognito"/>
     <item
@@ -37,16 +37,16 @@
         android:title="@string/action_copy"/>
     <item
         android:id="@+id/action_add_to_homescreen"
-        android:title="@string/action_add_to_homescreen"/>
+        android:title="@string/action_add_to_homescreen"/>-->
     <item
         android:id="@+id/action_bookmarks"
         android:title="@string/action_bookmarks"/>
     <item
         android:id="@+id/action_add_bookmark"
         android:title="@string/action_add_bookmark"/>
-    <item
+    <!--<item
         android:id="@+id/action_reading_mode"
-        android:title="@string/reading_mode"/>
+        android:title="@string/reading_mode"/>-->
     <item
         android:id="@+id/action_settings"
         android:title="@string/settings"/>

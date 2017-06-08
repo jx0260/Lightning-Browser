@@ -135,4 +135,11 @@
         <item name="android:textStyle">normal</item>
     </style>
 
+
+    <style name="dialog_common_style" parent="@android:style/Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowFrame">@null</item>
+    </style>
 </resources>

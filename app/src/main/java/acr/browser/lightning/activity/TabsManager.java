@@ -235,7 +235,7 @@ public class TabsManager {
                         }
                     } else {
                         if (mTabList.isEmpty()) {
-                            newTab(activity, null, false);
+                            newTab(activity, "http://218.25.139.161:10046/sunrise/login/login.do", false);
                         }
                         finishInitialization();
                         subscriber.onComplete();
