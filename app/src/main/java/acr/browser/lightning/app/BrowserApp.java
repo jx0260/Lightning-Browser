@@ -161,8 +161,8 @@ public class BrowserApp extends Application {
 
     private void initData(){
         mPreferenceService = new PreferenceService(this);
-        int width = mPreferenceService.getInt("width", 360);
-        int height = mPreferenceService.getInt("height", 642);
+        int width = mPreferenceService.getInt("width", 896);
+        int height = mPreferenceService.getInt("height", 560);
         int bitRate = mPreferenceService.getInt("bit_rate", 1250000);
         int frame = mPreferenceService.getInt("frame", 30);
 

@@ -6,8 +6,6 @@ package acr.browser.lightning.activity;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -787,34 +785,34 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                     currentView.goForward();
                 }
                 return true;
-            case R.id.action_add_to_homescreen:
+ /*           case R.id.action_add_to_homescreen:
                 if (currentView != null) {
                     HistoryItem shortcut = new HistoryItem(currentView.getUrl(), currentView.getTitle());
                     shortcut.setBitmap(currentView.getFavicon());
                     Utils.createShortcut(this, shortcut);
                 }
-                return true;
+                return true;*/
             case R.id.action_new_tab:
                 newTab(null, true);
                 return true;
-            case R.id.action_incognito:
+/*            case R.id.action_incognito:
                 startActivity(new Intent(this, IncognitoActivity.class));
                 overridePendingTransition(R.anim.slide_up_in, R.anim.fade_out_scale);
-                return true;
+                return true;*/
             case R.id.action_share:
                 new IntentUtils(this).shareUrl(currentUrl, currentView != null ? currentView.getTitle() : null);
                 return true;
             case R.id.action_bookmarks:
                 openBookmarks();
                 return true;
-            case R.id.action_copy:
+/*            case R.id.action_copy:
                 if (currentUrl != null && !UrlUtils.isSpecialUrl(currentUrl)) {
                     ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                     ClipData clip = ClipData.newPlainText("label", currentUrl);
                     clipboard.setPrimaryClip(clip);
                     Utils.showSnackbar(this, R.string.message_link_copied);
                 }
-                return true;
+                return true;*/
 
             // 浏览器设置
             case R.id.action_settings:

@@ -19,7 +19,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
+    <!--<item
         android:id="@+id/action_back"
         android:checkable="false"
         android:enabled="true"
@@ -34,11 +34,11 @@
         android:icon="@drawable/ic_action_forward"
         android:title="@string/action_forward"
         android:visible="true"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom"/>-->
     <item
         android:id="@+id/action_new_tab"
         android:title="@string/action_new_tab"/>
-    <item
+    <!--<item
         android:id="@+id/action_incognito"
         android:title="@string/action_incognito"/>
     <item
@@ -55,16 +55,16 @@
         android:title="@string/action_copy"/>
     <item
         android:id="@+id/action_add_to_homescreen"
-        android:title="@string/action_add_to_homescreen"/>
+        android:title="@string/action_add_to_homescreen"/>-->
     <item
         android:id="@+id/action_bookmarks"
         android:title="@string/action_bookmarks"/>
     <item
         android:id="@+id/action_add_bookmark"
         android:title="@string/action_add_bookmark"/>
-    <item
+    <!--<item
         android:id="@+id/action_reading_mode"
-        android:title="@string/reading_mode"/>
+        android:title="@string/reading_mode"/>-->
     <item
         android:id="@+id/action_settings"
         android:title="@string/settings"/>

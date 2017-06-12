@@ -15,6 +15,12 @@
     <header
         android:fragment="acr.browser.lightning.fragment.AdvancedSettingsFragment"
         android:title="@string/settings_advanced"/>
+
+    <header
+        android:fragment="acr.browser.lightning.fragment.CheckUpdateFragment"
+        android:title="@string/check_update"
+        />
+
     <header
         android:fragment="acr.browser.lightning.fragment.AboutSettingsFragment"
         android:title="@string/settings_about"/>

@@ -60,6 +60,7 @@ import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.udp.LockScreenMonitorService;
 import acr.browser.lightning.udp.OnlineEnum;
 import acr.browser.lightning.udp.StudentOnlineMsg;
 import acr.browser.lightning.udp.UDPMonitorService;
@@ -1241,6 +1242,9 @@ public class LightningView {
 
         @JavascriptInterface
         public String getIp(){
+            Intent LockScreenIntent = new Intent(mActivity, LockScreenMonitorService.class);
+            mActivity.startService(LockScreenIntent);
+
             return getLocalNetIp();
         }
 
