@@ -111,3 +111,14 @@
 -dontwarn org.apache.http.conn.ssl.DefaultHostnameVerifier
 
 -dontwarn org.apache.http.HttpHost
+
+-dontwarn com.alibaba.fastjson.**
+-dontwarn com.fasterxml.jackson.databind.**
+-dontwarn com.tencent.smtt.export.external.DexLoader
+-dontwarn net.chinaedu.aedu.image.loader.AeduPicassoImageLoader
+-dontwarn net.chinaedu.aedu.network.http.reftrofit.AeduRetroFactory
+-dontwarn net.chinaedu.screenrecorder.MainActivity
+-dontwarn okio.DeflaterSink
+-dontwarn okio.Okio
+-dontwarn retrofit2.Platform$Java8
+

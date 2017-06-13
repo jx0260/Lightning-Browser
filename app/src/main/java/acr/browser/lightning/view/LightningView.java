@@ -60,7 +60,6 @@ import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
-import acr.browser.lightning.udp.LockScreenMonitorService;
 import acr.browser.lightning.udp.OnlineEnum;
 import acr.browser.lightning.udp.StudentOnlineMsg;
 import acr.browser.lightning.udp.UDPMonitorService;
@@ -68,6 +67,7 @@ import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
+import acr.browser.lightning.whitelist.UrlWhiteListManager;
 
 /**
  * {@link LightningView} acts as a tab for the browser,
@@ -118,6 +118,7 @@ public class LightningView {
     @Inject PreferenceManager mPreferences;
     @Inject LightningDialogBuilder mBookmarksDialogBuilder;
     @Inject ProxyUtils mProxyUtils;
+    @Inject UrlWhiteListManager urlWhiteListManager;
 
     public LightningView(@NonNull Activity activity, @Nullable String url, boolean isIncognito) {
         BrowserApp.getAppComponent().inject(this);
@@ -352,7 +353,7 @@ public class LightningView {
             settings.setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
         }
 
-        settings.setBlockNetworkImage(mPreferences.getBlockImagesEnabled());
+//        settings.setBlockNetworkImage(mPreferences.getBlockImagesEnabled());
         if (!mIsIncognitoTab) {
             settings.setSupportMultipleWindows(mPreferences.getPopupsEnabled());
         } else {
@@ -1240,14 +1241,34 @@ public class LightningView {
 
     public class JsInterfaceClass {
 
+        /**
+         * 教师推送过来的网址（绿色上网）
+         * @param url
+         */
+        @JavascriptInterface
+        public void safeOpenUrl(String url){
+            // url校验<br>
+            // 校验通过的，才能打开
+            if( urlWhiteListManager.validateUrl(url) ){
+                getWebView().loadUrl(url);
+            }
+        }
+
         @JavascriptInterface
         public String getIp(){
-            Intent LockScreenIntent = new Intent(mActivity, LockScreenMonitorService.class);
-            mActivity.startService(LockScreenIntent);
+//            Intent LockScreenIntent = new Intent(mActivity, LockScreenMonitorService.class);
+//            mActivity.startService(LockScreenIntent);
 
             return getLocalNetIp();
         }
 
+        /**
+         * 暂时不用此方法
+         * @param multicastIp
+         * @param realName
+         * @param userName
+         * @param stuImg
+         */
         @JavascriptInterface
         public void studentEnterClass(String multicastIp, String realName, String userName, String stuImg) {
             multicastIp = "239.0.0.1";

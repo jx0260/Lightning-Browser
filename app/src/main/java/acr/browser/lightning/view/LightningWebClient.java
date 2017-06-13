@@ -44,6 +44,7 @@ import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.Utils;
+import acr.browser.lightning.whitelist.UrlWhiteListManager;
 
 public class LightningWebClient extends WebViewClient {
 
@@ -56,6 +57,8 @@ public class LightningWebClient extends WebViewClient {
 
     @Inject ProxyUtils mProxyUtils;
     @Inject AdBlock mAdBlock;
+    @Inject
+    UrlWhiteListManager urlWhiteListManager;
 
     LightningWebClient(@NonNull Activity activity, @NonNull LightningView lightningView) {
         BrowserApp.getAppComponent().inject(this);
@@ -288,6 +291,12 @@ public class LightningWebClient extends WebViewClient {
     }
 
     private boolean shouldOverrideLoading(@NonNull WebView view, @NonNull String url) {
+
+        // 校验不通过不走下面的逻辑
+        if( !urlWhiteListManager.validateUrl(url) ){
+            return false;
+        }
+
         // Check if configured proxy is available
         if (!mProxyUtils.isProxyReady(mActivity)) {
             // User has been notified

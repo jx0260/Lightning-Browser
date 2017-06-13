@@ -112,7 +112,8 @@ abstract class BaseSuggestionsModel {
 
             Response suggestionsResponse = mHttpClient.newCall(suggestionsRequest).execute();
 
-            return suggestionsResponse.body().byteStream();
+//            return suggestionsResponse.body().byteStream();
+            return null;
         } catch (Exception e) {
             Log.e(TAG, "Problem getting search suggestions", e);
         }

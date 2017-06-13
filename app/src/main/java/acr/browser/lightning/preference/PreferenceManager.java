@@ -85,7 +85,7 @@ public class PreferenceManager {
     @NonNull
     public Suggestion getSearchSuggestionChoice() {
         try {
-            return Suggestion.valueOf(mPrefs.getString(Name.SEARCH_SUGGESTIONS, Suggestion.SUGGESTION_GOOGLE.name()));
+            return Suggestion.valueOf(mPrefs.getString(Name.SEARCH_SUGGESTIONS, Suggestion.SUGGESTION_NONE.name()));
         } catch (IllegalArgumentException ignored) {
             return Suggestion.SUGGESTION_NONE;
         }
@@ -178,7 +178,8 @@ public class PreferenceManager {
     }
 
     public boolean getJavaScriptEnabled() {
-        return mPrefs.getBoolean(Name.JAVASCRIPT, true);
+//        return mPrefs.getBoolean(Name.JAVASCRIPT, true);
+        return true;
     }
 
     public boolean getLocationEnabled() {
@@ -229,7 +230,7 @@ public class PreferenceManager {
 
     @NonNull
     public String getSearchUrl() {
-        return mPrefs.getString(Name.SEARCH_URL, Constants.GOOGLE_SEARCH);
+        return mPrefs.getString(Name.SEARCH_URL, Constants.BAIDU_SEARCH);
     }
 
     public boolean getTextReflowEnabled() {

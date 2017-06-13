@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -21,30 +20,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
-import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.dialog.BrowserDialog;
 import acr.browser.lightning.download.DownloadHandler;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.ThemeUtils;
-import acr.browser.lightning.utils.Utils;
 
 import static acr.browser.lightning.preference.PreferenceManager.Suggestion;
 
 public class GeneralSettingsFragment extends LightningPreferenceFragment implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
     private static final String SETTINGS_PROXY = "proxy";
-    private static final String SETTINGS_FLASH = "cb_flash";
-    private static final String SETTINGS_ADS = "cb_ads";
+//    private static final String SETTINGS_FLASH = "cb_flash";
+//    private static final String SETTINGS_ADS = "cb_ads";
     private static final String SETTINGS_IMAGES = "cb_images";
-    private static final String SETTINGS_JAVASCRIPT = "cb_javascript";
-    private static final String SETTINGS_COLORMODE = "cb_colormode";
+//    private static final String SETTINGS_JAVASCRIPT = "cb_javascript";
+//    private static final String SETTINGS_COLORMODE = "cb_colormode";
     private static final String SETTINGS_USERAGENT = "agent";
     private static final String SETTINGS_DOWNLOAD = "download";
     private static final String SETTINGS_HOME = "home";
-    private static final String SETTINGS_SEARCHENGINE = "search";
-    private static final String SETTINGS_SUGGESTIONS = "suggestions_choice";
+//    private static final String SETTINGS_SEARCHENGINE = "search";
+//    private static final String SETTINGS_SUGGESTIONS = "suggestions_choice";
     private Activity mActivity;
     private static final int API = android.os.Build.VERSION.SDK_INT;
     private CharSequence[] mProxyChoices;
@@ -69,26 +66,26 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         useragent = findPreference(SETTINGS_USERAGENT);
         downloadloc = findPreference(SETTINGS_DOWNLOAD);
         home = findPreference(SETTINGS_HOME);
-        searchengine = findPreference(SETTINGS_SEARCHENGINE);
-        searchsSuggestions = findPreference(SETTINGS_SUGGESTIONS);
+//        searchengine = findPreference(SETTINGS_SEARCHENGINE);
+//        searchsSuggestions = findPreference(SETTINGS_SUGGESTIONS);
 
-        CheckBoxPreference cbFlash = (CheckBoxPreference) findPreference(SETTINGS_FLASH);
-        CheckBoxPreference cbAds = (CheckBoxPreference) findPreference(SETTINGS_ADS);
-        CheckBoxPreference cbImages = (CheckBoxPreference) findPreference(SETTINGS_IMAGES);
-        CheckBoxPreference cbJsScript = (CheckBoxPreference) findPreference(SETTINGS_JAVASCRIPT);
-        CheckBoxPreference cbColorMode = (CheckBoxPreference) findPreference(SETTINGS_COLORMODE);
+//        CheckBoxPreference cbFlash = (CheckBoxPreference) findPreference(SETTINGS_FLASH);
+//        CheckBoxPreference cbAds = (CheckBoxPreference) findPreference(SETTINGS_ADS);
+//        CheckBoxPreference cbImages = (CheckBoxPreference) findPreference(SETTINGS_IMAGES);
+//        CheckBoxPreference cbJsScript = (CheckBoxPreference) findPreference(SETTINGS_JAVASCRIPT);
+//        CheckBoxPreference cbColorMode = (CheckBoxPreference) findPreference(SETTINGS_COLORMODE);
 
         proxy.setOnPreferenceClickListener(this);
         useragent.setOnPreferenceClickListener(this);
         downloadloc.setOnPreferenceClickListener(this);
         home.setOnPreferenceClickListener(this);
-        searchsSuggestions.setOnPreferenceClickListener(this);
-        searchengine.setOnPreferenceClickListener(this);
-        cbFlash.setOnPreferenceChangeListener(this);
-        cbAds.setOnPreferenceChangeListener(this);
-        cbImages.setOnPreferenceChangeListener(this);
-        cbJsScript.setOnPreferenceChangeListener(this);
-        cbColorMode.setOnPreferenceChangeListener(this);
+//        searchsSuggestions.setOnPreferenceClickListener(this);
+//        searchengine.setOnPreferenceClickListener(this);
+//        cbFlash.setOnPreferenceChangeListener(this);
+//        cbAds.setOnPreferenceChangeListener(this);
+//        cbImages.setOnPreferenceChangeListener(this);
+//        cbJsScript.setOnPreferenceChangeListener(this);
+//        cbColorMode.setOnPreferenceChangeListener(this);
 
         mAgentChoice = mPreferenceManager.getUserAgentChoice();
         mHomepage = mPreferenceManager.getHomepage();
@@ -106,11 +103,11 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             mPreferenceManager.setFlashSupport(0);
         }
 
-        setSearchEngineSummary(mPreferenceManager.getSearchChoice());
+//        setSearchEngineSummary(mPreferenceManager.getSearchChoice());
 
         downloadloc.setSummary(mDownloadLocation);
 
-        switch (mPreferenceManager.getSearchSuggestionChoice()) {
+        /*switch (mPreferenceManager.getSearchSuggestionChoice()) {
             case SUGGESTION_GOOGLE:
                 searchsSuggestions.setSummary(R.string.powered_by_google);
                 break;
@@ -120,8 +117,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             case SUGGESTION_NONE:
                 searchsSuggestions.setSummary(R.string.search_suggestions_off);
                 break;
-        }
-
+        }*/
 
         if (mHomepage.contains(Constants.SCHEME_HOMEPAGE)) {
             home.setSummary(getResources().getString(R.string.action_homepage));
@@ -147,18 +143,18 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                 useragent.setSummary(getResources().getString(R.string.agent_custom));
         }
 
-        int flashNum = mPreferenceManager.getFlashSupport();
+//        int flashNum = mPreferenceManager.getFlashSupport();
         boolean imagesBool = mPreferenceManager.getBlockImagesEnabled();
-        boolean enableJSBool = mPreferenceManager.getJavaScriptEnabled();
+//        boolean enableJSBool = mPreferenceManager.getJavaScriptEnabled();
 
-        cbAds.setEnabled(BuildConfig.FULL_VERSION);
-        cbFlash.setEnabled(API < Build.VERSION_CODES.KITKAT);
+//        cbAds.setEnabled(BuildConfig.FULL_VERSION);
+//        cbFlash.setEnabled(API < Build.VERSION_CODES.KITKAT);
 
-        cbImages.setChecked(imagesBool);
-        cbJsScript.setChecked(enableJSBool);
-        cbFlash.setChecked(flashNum > 0);
-        cbAds.setChecked(BuildConfig.FULL_VERSION && mPreferenceManager.getAdBlockEnabled());
-        cbColorMode.setChecked(mPreferenceManager.getColorModeEnabled());
+//        cbImages.setChecked(imagesBool);
+//        cbJsScript.setChecked(enableJSBool);
+//        cbFlash.setChecked(flashNum > 0);
+//        cbAds.setChecked(BuildConfig.FULL_VERSION && mPreferenceManager.getAdBlockEnabled());
+//        cbColorMode.setChecked(mPreferenceManager.getColorModeEnabled());
     }
 
     private void searchUrlPicker() {
@@ -580,12 +576,12 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             case SETTINGS_HOME:
                 homepageDialog();
                 return true;
-            case SETTINGS_SEARCHENGINE:
+/*            case SETTINGS_SEARCHENGINE:
                 searchDialog();
                 return true;
             case SETTINGS_SUGGESTIONS:
                 suggestionsDialog();
-                return true;
+                return true;*/
             default:
                 return false;
         }
@@ -598,7 +594,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             checked = Boolean.TRUE.equals(newValue);
         }
         switch (preference.getKey()) {
-            case SETTINGS_FLASH:
+            /*case SETTINGS_FLASH:
                 if (!Utils.isFlashInstalled(mActivity) && checked) {
                     Utils.createInformativeDialog(mActivity, R.string.title_warning, R.string.dialog_adobe_not_installed);
                     mPreferenceManager.setFlashSupport(0);
@@ -613,16 +609,16 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
                 return true;
             case SETTINGS_ADS:
                 mPreferenceManager.setAdBlockEnabled(checked);
-                return true;
+                return true;*/
             case SETTINGS_IMAGES:
                 mPreferenceManager.setBlockImagesEnabled(checked);
                 return true;
-            case SETTINGS_JAVASCRIPT:
-                mPreferenceManager.setJavaScriptEnabled(checked);
-                return true;
-            case SETTINGS_COLORMODE:
-                mPreferenceManager.setColorModeEnabled(checked);
-                return true;
+//            case SETTINGS_JAVASCRIPT:
+//                mPreferenceManager.setJavaScriptEnabled(checked);
+//                return true;
+//            case SETTINGS_COLORMODE:
+//                mPreferenceManager.setColorModeEnabled(checked);
+//                return true;
             default:
                 return false;
         }

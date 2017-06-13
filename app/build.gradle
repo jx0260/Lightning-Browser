@@ -2,9 +2,16 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'sunrise'
+            keyPassword 'sunrise'
+            storeFile file('G:/android-projects/Lightning-BrowserJin/sunrise.jks')
+            storePassword 'sunrise'
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion '25.0.2'
-
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 25
@@ -13,44 +20,40 @@ android {
 
         multiDexEnabled true;
     }
-
     sourceSets {
         lightningPlus.setRoot('src/LightningPlus')
         lightningLite.setRoot('src/LightningLite')
     }
-
     buildTypes {
         debug {
             minifyEnabled false
             shrinkResources false
             proguardFiles 'proguard-project.txt'
         }
-
         release {
-            minifyEnabled true
-            shrinkResources true
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles 'proguard-project.txt'
+            signingConfig signingConfigs.config
         }
     }
-
     productFlavors {
-        lightningPlus {
-            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
-            applicationId "acr.browser.lightning"
-            versionCode 91
-        }
+//        lightningPlus {
+//            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
+//            applicationId "acr.browser.lightning"
+//            versionCode 91
+//        }
 
         lightningLite {
             buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")"
-            applicationId "acr.browser.barebones"
+            applicationId "com.chianedu.sunrise"
             versionCode 93
         }
     }
-
     lintOptions {
         abortOnError true
     }
-
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
@@ -60,7 +63,6 @@ android {
         exclude 'META-INF/rxjava.properties'
         exclude '.readme'
     }
-
 }
 
 dexcount {
@@ -82,14 +84,10 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
     compile(name: 'aedu-release', ext: 'aar')
-
-//    testCompile 'junit:junit:4.12'
+    //    testCompile 'junit:junit:4.12'
     compile files('libs/tbs_sdk_v3.1.0.1034.jar')
-
     compile 'com.google.code.gson:gson:2.8.0'
-
     // support libraries
     def supportLibVersion = '25.3.1'
     compile "com.android.support:palette-v7:$supportLibVersion"
@@ -97,33 +95,25 @@ dependencies {
     compile "com.android.support:design:$supportLibVersion"
     compile "com.android.support:recyclerview-v7:$supportLibVersion"
     compile "com.android.support:support-v4:$supportLibVersion"
-
     // html parsing for reading mode
     compile 'org.jsoup:jsoup:1.10.2'
-
     // dependency injection
     def daggerVersion = '2.10'
     compile "com.google.dagger:dagger:$daggerVersion"
     annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
     provided 'javax.annotation:jsr250-api:1.0'
-
     // view binding
     compile 'com.jakewharton:butterknife:8.5.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
-
     // permissions
     compile 'com.anthonycr.grant:permissions:1.1.2'
-
     // proxy support
     compile 'net.i2p.android:client:0.8'
-
     compile 'com.squareup.okhttp3:okhttp:3.7.0'
-
     // tor proxy
     def netcipherVersion = '2.0.0-alpha1'
     compile "info.guardianproject.netcipher:netcipher:$netcipherVersion"
     compile "info.guardianproject.netcipher:netcipher-webkit:$netcipherVersion"
-
     /**
      * retrofit
      */
@@ -132,21 +122,15 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.retrofit2:converter-jackson:2.0.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
-
     compile 'com.alibaba:fastjson:1.2.32'
-
     compile 'com.anthonycr.bonsai:bonsai:1.1.0'
-
     compile 'com.anthonycr.progress:animated-progress:1.0'
-
     // memory leak analysis
     def leakCanaryVersion = '1.5.1'
     debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
     releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
     compile project(path: ':screenrecorder')
-
     //RxJava 下载用
     compile 'zlc.season:rxdownload2:2.0.2'
     compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.8.2@aar'
-
 }
