@@ -67,7 +67,7 @@ import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
-import acr.browser.lightning.whitelist.UrlWhiteListManager;
+import acr.browser.lightning.safedomain.SafeDomainListManager;
 
 /**
  * {@link LightningView} acts as a tab for the browser,
@@ -118,7 +118,7 @@ public class LightningView {
     @Inject PreferenceManager mPreferences;
     @Inject LightningDialogBuilder mBookmarksDialogBuilder;
     @Inject ProxyUtils mProxyUtils;
-    @Inject UrlWhiteListManager urlWhiteListManager;
+    @Inject SafeDomainListManager mSafeDomainListManager;
 
     public LightningView(@NonNull Activity activity, @Nullable String url, boolean isIncognito) {
         BrowserApp.getAppComponent().inject(this);
@@ -1249,7 +1249,7 @@ public class LightningView {
         public void safeOpenUrl(String url){
             // url校验<br>
             // 校验通过的，才能打开
-            if( urlWhiteListManager.validateUrl(url) ){
+            if( mSafeDomainListManager.validateUrl(url) ){
                 getWebView().loadUrl(url);
             }
         }

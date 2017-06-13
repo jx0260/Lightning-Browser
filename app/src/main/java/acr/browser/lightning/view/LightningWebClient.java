@@ -44,7 +44,7 @@ import acr.browser.lightning.utils.IntentUtils;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.Utils;
-import acr.browser.lightning.whitelist.UrlWhiteListManager;
+import acr.browser.lightning.safedomain.SafeDomainListManager;
 
 public class LightningWebClient extends WebViewClient {
 
@@ -58,7 +58,7 @@ public class LightningWebClient extends WebViewClient {
     @Inject ProxyUtils mProxyUtils;
     @Inject AdBlock mAdBlock;
     @Inject
-    UrlWhiteListManager urlWhiteListManager;
+    SafeDomainListManager urlWhiteListManager;
 
     LightningWebClient(@NonNull Activity activity, @NonNull LightningView lightningView) {
         BrowserApp.getAppComponent().inject(this);

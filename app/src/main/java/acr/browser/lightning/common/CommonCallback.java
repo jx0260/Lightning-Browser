@@ -31,15 +31,12 @@ public abstract class CommonCallback<T extends BaseResponseObj> implements Callb
     public final void onFailure(Call<T> call, Throwable t) {
         t.printStackTrace();
         onComplete();
-        if (!onFailure(t)) {
-//            ToastUtil.show(t.getMessage());
-        }
+        onFailure(t);
     }
 
     public abstract void onResponse(Response<T> response);
 
-    public boolean onFailure(Throwable e) {
-        return false;
+    protected void onFailure(Throwable e) {
     }
 
     public void onComplete() {

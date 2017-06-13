@@ -47,7 +47,7 @@ android {
 
         lightningLite {
             buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")"
-            applicationId "com.chianedu.sunrise"
+            applicationId "com.chinaedu.sunrise"
             versionCode 93
         }
     }

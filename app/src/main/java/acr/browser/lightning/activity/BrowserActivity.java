@@ -438,6 +438,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         }
 
         mPresenter.checkVersion();
+
+        mPresenter.queryUrlWhiteList();
     }
 
     @IdRes

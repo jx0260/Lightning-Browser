@@ -13,6 +13,7 @@ import com.anthonycr.bonsai.Schedulers;
 import net.chinaedu.aedu.utils.LogUtils;
 
 import java.io.File;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -20,15 +21,20 @@ import acr.browser.lightning.BuildConfig;
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.app.BrowserApp;
+import acr.browser.lightning.common.CommonCallback;
 import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.safedomain.SafeDomainListManager;
+import acr.browser.lightning.safedomain.SafeDomainModel;
+import acr.browser.lightning.safedomain.SafeDomainVO;
 import acr.browser.lightning.utils.DownloadManager;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.version.entity.VersionEntity;
 import acr.browser.lightning.version.view.VersionChecker;
 import acr.browser.lightning.view.LightningView;
 import io.reactivex.disposables.Disposable;
+import retrofit2.Response;
 import zlc.season.rxdownload2.entity.DownloadStatus;
 
 /**
@@ -45,6 +51,12 @@ public class BrowserPresenter implements IBrowserPresenter{
 
     @NonNull private final BrowserView mView;
     @Nullable private LightningView mCurrentTab;
+
+    @Inject
+    SafeDomainListManager mSafeDomainListManager;
+
+    @Inject
+    SafeDomainModel mSafeDomainModel;
 
     private final boolean mIsIncognito;
     private boolean mShouldClose;
@@ -432,5 +444,27 @@ public class BrowserPresenter implements IBrowserPresenter{
         }
     }
 
+    /**
+     * 查询网址白名单
+     */
+    public void queryUrlWhiteList(){
+        mSafeDomainModel.findSafeDomainList(new CommonCallback<SafeDomainVO>() {
+            @Override
+            public void onResponse(Response<SafeDomainVO> response) {
+                SafeDomainVO mSafeDomainVO = response.body();
+                List<String> safeUrls = mSafeDomainVO.getList();
+                if(null != safeUrls && safeUrls.isEmpty()){
+                    mSafeDomainListManager.addAllUrls(safeUrls);
+                }
+            }
+
+            @Override
+            public boolean onFailure(Throwable e) {
+                super.onFailure(e);
+                Log.i("BrowserPresenter", Log.getStackTraceString(e));
+                return true;
+            }
+        });
+    }
 
 }

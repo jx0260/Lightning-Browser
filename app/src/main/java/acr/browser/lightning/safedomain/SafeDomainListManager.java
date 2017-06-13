@@ -1,5 +1,8 @@
-package acr.browser.lightning.whitelist;
+package acr.browser.lightning.safedomain;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -11,15 +14,28 @@ import javax.inject.Singleton;
  */
 
 @Singleton
-public class UrlWhiteListManager {
+public class SafeDomainListManager {
 
-    private List<String> urlWhiteList;
+    private List<String> urlWhiteList = Collections.synchronizedList(new ArrayList<String>(5));
 
     @Inject
-    UrlWhiteListManager() {
+    SafeDomainListManager() {
+        urlWhiteList.add("www.chinaedu.com");
     }
 
-    public void setUrlurlWhiteList(List<String> urlList){
+    public void addUrl(String url){
+        urlWhiteList.add(url);
+    }
+
+    public void addAllUrls(Collection<String> urls){
+        urlWhiteList.addAll(urls);
+    }
+
+    public void removeUrl(String url){
+        urlWhiteList.remove(url);
+    }
+
+    public void setUrlWhiteList(List<String> urlList){
         this.urlWhiteList = urlList;
     }
 
