@@ -58,7 +58,7 @@ public class LightningWebClient extends WebViewClient {
     @Inject ProxyUtils mProxyUtils;
     @Inject AdBlock mAdBlock;
     @Inject
-    SafeDomainListManager urlWhiteListManager;
+    SafeDomainListManager mSafeDomainListManager;
 
     LightningWebClient(@NonNull Activity activity, @NonNull LightningView lightningView) {
         BrowserApp.getAppComponent().inject(this);
@@ -293,8 +293,9 @@ public class LightningWebClient extends WebViewClient {
     private boolean shouldOverrideLoading(@NonNull WebView view, @NonNull String url) {
 
         // 校验不通过不走下面的逻辑
-        if( !urlWhiteListManager.validateUrl(url) ){
-            return false;
+        if( !mSafeDomainListManager.validateUrl(url) ){
+            view.loadUrl(Constants.CANT_ACCESS_HTML);
+            return true;
         }
 
         // Check if configured proxy is available

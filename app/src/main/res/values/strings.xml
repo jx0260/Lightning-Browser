@@ -113,6 +113,7 @@
     <string name="custom_url">Custom URL</string>
     <string name="message_blocked_local">Local file has been blocked from loading</string>
     <string name="licenses">Open Source Licenses</string>
+    <string name="app_name_label">app name</string>
     <string name="suggestion">Search for</string>
     <string name="block_ads">Block ads</string>
     <string name="message_insecure_connection">Connection to this site is not secure:\n%1$s\nProceed anyway?</string>

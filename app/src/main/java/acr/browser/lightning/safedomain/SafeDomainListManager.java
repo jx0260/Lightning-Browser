@@ -20,7 +20,9 @@ public class SafeDomainListManager {
 
     @Inject
     SafeDomainListManager() {
-        urlWhiteList.add("www.chinaedu.com");
+        urlWhiteList.add("baidu.com");
+        urlWhiteList.add("chinaedu.com");
+        urlWhiteList.add("218.25.139.161");// http://218.25.139.161:10046/sunrise/login/login.do 默认主页
     }
 
     public void addUrl(String url){
@@ -40,14 +42,10 @@ public class SafeDomainListManager {
     }
 
     public boolean validateUrl(String targetUrl){
-        if (targetUrl.contains("chinaedu.com")) {
-            return true;
-        } else {
-            if (urlWhiteList != null && !urlWhiteList.isEmpty()) {
-                for (int i = 0; i < urlWhiteList.size(); i++) {
-                    if (targetUrl.contains(urlWhiteList.get(i))) {
-                        return true;
-                    }
+        if (urlWhiteList != null && !urlWhiteList.isEmpty()) {
+            for (int i = 0; i < urlWhiteList.size(); i++) {
+                if (targetUrl.contains(urlWhiteList.get(i))) {
+                    return true;
                 }
             }
         }

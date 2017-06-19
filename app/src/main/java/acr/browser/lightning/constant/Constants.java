@@ -8,8 +8,6 @@ import android.support.annotation.IntDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import acr.browser.lightning.BuildConfig;
-
 public final class Constants {
 
     private Constants() {
@@ -82,4 +80,11 @@ public final class Constants {
     public static final String[] TEXT_ENCODINGS = {"ISO-8859-1", "UTF-8", "GBK", "Big5", "ISO-2022-JP", "SHIFT_JS", "EUC-JP", "EUC-KR"};
 
     public static final String INTENT_ORIGIN = "URL_INTENT_ORIGIN";
+
+    // 不能访问时，提示的网页
+    public static final String CANT_ACCESS_HTML = "file:///android_asset/html/cantAccess.html";
+    // 默认主页
+    public static final String DEFAULT_HOME_PAGE = "http://218.25.139.161:10046/sunrise/login/login.do";
+    // 导航页
+    public static final String NAVIGATE_PAGE = "http://dao345.com/";
 }

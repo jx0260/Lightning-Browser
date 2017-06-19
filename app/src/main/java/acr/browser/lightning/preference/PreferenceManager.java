@@ -166,7 +166,8 @@ public class PreferenceManager {
 
     @NonNull
     public String getHomepage() {
-        return mPrefs.getString(Name.HOMEPAGE, Constants.SCHEME_HOMEPAGE);
+        return Constants.DEFAULT_HOME_PAGE;
+//        return mPrefs.getString(Name.HOMEPAGE, Constants.SCHEME_HOMEPAGE);
     }
 
     public boolean getIncognitoCookiesEnabled() {

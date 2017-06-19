@@ -21,6 +21,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+
     <uses-feature
         android:name="android.hardware.location.gps"
         android:required="false"/>
@@ -168,6 +171,12 @@
         <!--<service android:name=".udp.UDPMonitorService" />-->
 
         <service android:name=".udp.LockScreenMonitorService" />
+
+        <activity android:name=".activity.LockScreenActivity"
+                  android:configChanges="orientation|screenSize"
+                  android:theme="@android:style/Theme.NoTitleBar"
+                  android:windowSoftInputMode="adjustResize">
+        </activity>
 
     </application>
 

@@ -60,6 +60,8 @@ import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.dialog.LightningDialogBuilder;
 import acr.browser.lightning.download.LightningDownloadListener;
 import acr.browser.lightning.preference.PreferenceManager;
+import acr.browser.lightning.safedomain.SafeDomainListManager;
+import acr.browser.lightning.udp.LockScreenMonitorService;
 import acr.browser.lightning.udp.OnlineEnum;
 import acr.browser.lightning.udp.StudentOnlineMsg;
 import acr.browser.lightning.udp.UDPMonitorService;
@@ -67,7 +69,6 @@ import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ProxyUtils;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.utils.Utils;
-import acr.browser.lightning.safedomain.SafeDomainListManager;
 
 /**
  * {@link LightningView} acts as a tab for the browser,
@@ -163,12 +164,18 @@ public class LightningView {
 
         if (url != null) {
             if (!url.trim().isEmpty()) {
-                mWebView.loadUrl(url, mRequestHeaders);
+                // 校验通过的，才能打开
+//                if( mSafeDomainListManager.validateUrl(url) ) {
+                    mWebView.loadUrl(url, mRequestHeaders);
+//                } else {
+//                    mWebView.loadUrl(Constants.CANT_ACCESS_HTML);
+//                }
             } else {
                 // don't load anything, the user is looking for a blank tab
             }
         } else {
-            loadHomepage();
+            loadNavigatePage();
+//            loadHomepage();
         }
     }
 
@@ -219,6 +226,16 @@ public class LightningView {
                 mWebView.loadUrl(sHomepage, mRequestHeaders);
                 break;
         }
+    }
+
+    /**
+     * 加载导航页
+     */
+    public void loadNavigatePage(){
+        if (mWebView == null) {
+            return;
+        }
+        mWebView.loadUrl(Constants.NAVIGATE_PAGE, mRequestHeaders);
     }
 
     /**
@@ -1083,7 +1100,12 @@ public class LightningView {
         }
 
         if (mWebView != null) {
-            mWebView.loadUrl(url, mRequestHeaders);
+            // 校验通过的，才能打开
+            if( mSafeDomainListManager.validateUrl(url) ) {
+                mWebView.loadUrl(url, mRequestHeaders);
+            } else {
+                mWebView.loadUrl(Constants.CANT_ACCESS_HTML);
+            }
         }
     }
 
@@ -1246,18 +1268,20 @@ public class LightningView {
          * @param url
          */
         @JavascriptInterface
-        public void safeOpenUrl(String url){
+        public void safeOpenUrl(final String url){
             // url校验<br>
-            // 校验通过的，才能打开
-            if( mSafeDomainListManager.validateUrl(url) ){
-                getWebView().loadUrl(url);
-            }
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mUIController.handleNewTab(LightningDialogBuilder.NewTab.FOREGROUND, url);
+                }
+            });
         }
 
         @JavascriptInterface
         public String getIp(){
-//            Intent LockScreenIntent = new Intent(mActivity, LockScreenMonitorService.class);
-//            mActivity.startService(LockScreenIntent);
+            Intent LockScreenIntent = new Intent(mActivity, LockScreenMonitorService.class);
+            mActivity.startService(LockScreenIntent);
 
             return getLocalNetIp();
         }

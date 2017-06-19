@@ -48,7 +48,7 @@ public class ScreenRecorderLocal extends Thread {
 
     // parameters for the encoder
     private static final String MIME_TYPE = "video/avc"; // H.264 Advanced Video Coding
-    private static final int TIMEOUT_US = 10000;
+    private static final int TIMEOUT_US = 0;
 
     private MediaCodec mEncoder;
     private Surface mSurface;
@@ -129,7 +129,7 @@ public class ScreenRecorderLocal extends Thread {
     private void recordVirtualDisplay() {
         while (!mQuit.get()) {
             synchronized (mInt){
-                if(mInt > 5){
+                if(mInt > 2){
                     release();
                     if(mOnStateListener != null){
                         mOnStateListener.onWriteFinish();
@@ -217,7 +217,16 @@ public class ScreenRecorderLocal extends Thread {
         mSurface = mEncoder.createInputSurface();
         Log.d(TAG, "created input surface: " + mSurface);
         mEncoder.start();
+
+//        getSpsPpsByteBuffer(mEncoder.getOutputFormat());
     }
+
+//    private void getSpsPpsByteBuffer(MediaFormat newFormat) {
+//        ByteBuffer rawSps = newFormat.getByteBuffer("csd-0");
+//        ByteBuffer rawPps = newFormat.getByteBuffer("csd-1");
+//        Log.i("aaa", rawSps.toString());
+//        Log.i("aaa", rawPps.toString());
+//    }
 
     private synchronized void release() {
         if (mEncoder != null) {

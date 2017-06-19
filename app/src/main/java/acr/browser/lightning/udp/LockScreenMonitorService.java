@@ -49,8 +49,6 @@ public class LockScreenMonitorService extends IntentService {
 
     private FrameLayout contentContainer;
 
-
-
     public LockScreenMonitorService(){
         this("lockScreen-monitor-01");
     }
@@ -120,9 +118,11 @@ public class LockScreenMonitorService extends IntentService {
                         if (lockMsg.isLock()) {
                             // 锁屏
                             Log.i(TAG, "发起锁屏命令");
+                            showLock();
                         } else {
                             // 解锁
                             Log.i(TAG, "发起解锁命令");
+                            clearLock();
                         }
                     }catch (Exception e){
                     }
@@ -144,21 +144,19 @@ public class LockScreenMonitorService extends IntentService {
         }
     }
 
-
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if (null == intent) {
-            return START_STICKY;
-        }
-        int action = intent.getIntExtra("action", -1);
-        if (0 == action) {
-            clearLock();
-        } else if (1 == action) {
-            showLock();
-        }
-        return START_STICKY;
-    }
+//    @Override
+//    public int onStartCommand(Intent intent, int flags, int startId) {
+//        if (null == intent) {
+//            return START_STICKY;
+//        }
+//        int action = intent.getIntExtra("action", -1);
+//        if (0 == action) {
+//            clearLock();
+//        } else if (1 == action) {
+//            showLock();
+//        }
+//        return START_STICKY;
+//    }
 
     private void showLock() {
         if (null != contentContainer) {
@@ -168,7 +166,7 @@ public class LockScreenMonitorService extends IntentService {
         mFloatView = mLayoutInflater.inflate(R.layout.lock_view, null);
         //为View设置监听，以便处理用户的点击和拖动
 
-        mFloatView.findViewById(R.id.unlock).setOnClickListener(new View.OnClickListener() {
+        mFloatView.findViewById(R.id.btn_unlock).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                Intent intent = new Intent(TestService.this, TestService.class);

@@ -21,13 +21,10 @@ import android.hardware.display.VirtualDisplay;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
-import android.media.MediaMuxer;
 import android.media.projection.MediaProjection;
 import android.util.Log;
 import android.view.Surface;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
@@ -116,7 +113,7 @@ public class ScreenRecorder extends Thread {
 
     private void recordVirtualDisplay() {
         while (!mQuit.get()) {
-            int index = mEncoder.dequeueOutputBuffer(mBufferInfo, TIMEOUT_US);
+            int index = mEncoder.dequeueOutputBuffer(mBufferInfo, 0);
             Log.i(TAG, "dequeue output buffer index=" + index);
             if (index == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                 resetOutputFormat();

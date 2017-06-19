@@ -39,7 +39,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
 //    private static final String SETTINGS_COLORMODE = "cb_colormode";
     private static final String SETTINGS_USERAGENT = "agent";
     private static final String SETTINGS_DOWNLOAD = "download";
-    private static final String SETTINGS_HOME = "home";
+//    private static final String SETTINGS_HOME = "home";
 //    private static final String SETTINGS_SEARCHENGINE = "search";
 //    private static final String SETTINGS_SUGGESTIONS = "suggestions_choice";
     private Activity mActivity;
@@ -65,7 +65,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         proxy = findPreference(SETTINGS_PROXY);
         useragent = findPreference(SETTINGS_USERAGENT);
         downloadloc = findPreference(SETTINGS_DOWNLOAD);
-        home = findPreference(SETTINGS_HOME);
+//        home = findPreference(SETTINGS_HOME);
 //        searchengine = findPreference(SETTINGS_SEARCHENGINE);
 //        searchsSuggestions = findPreference(SETTINGS_SUGGESTIONS);
 
@@ -78,7 +78,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         proxy.setOnPreferenceClickListener(this);
         useragent.setOnPreferenceClickListener(this);
         downloadloc.setOnPreferenceClickListener(this);
-        home.setOnPreferenceClickListener(this);
+//        home.setOnPreferenceClickListener(this);
 //        searchsSuggestions.setOnPreferenceClickListener(this);
 //        searchengine.setOnPreferenceClickListener(this);
 //        cbFlash.setOnPreferenceChangeListener(this);
@@ -117,7 +117,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             case SUGGESTION_NONE:
                 searchsSuggestions.setSummary(R.string.search_suggestions_off);
                 break;
-        }*/
+        }
 
         if (mHomepage.contains(Constants.SCHEME_HOMEPAGE)) {
             home.setSummary(getResources().getString(R.string.action_homepage));
@@ -127,7 +127,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             home.setSummary(getResources().getString(R.string.action_bookmarks));
         } else {
             home.setSummary(mHomepage);
-        }
+        }*/
 
         switch (mAgentChoice) {
             case 1:
@@ -144,7 +144,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         }
 
 //        int flashNum = mPreferenceManager.getFlashSupport();
-        boolean imagesBool = mPreferenceManager.getBlockImagesEnabled();
+//        boolean imagesBool = mPreferenceManager.getBlockImagesEnabled();
 //        boolean enableJSBool = mPreferenceManager.getJavaScriptEnabled();
 
 //        cbAds.setEnabled(BuildConfig.FULL_VERSION);
@@ -401,7 +401,7 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
         if (!mHomepage.startsWith(Constants.ABOUT)) {
             currentHomepage = mHomepage;
         } else {
-            currentHomepage = "http://218.25.139.161:10046/sunrise/login/login.do";
+            currentHomepage = Constants.DEFAULT_HOME_PAGE;
         }
 
         BrowserDialog.showEditText(mActivity,
@@ -573,10 +573,10 @@ public class GeneralSettingsFragment extends LightningPreferenceFragment impleme
             case SETTINGS_DOWNLOAD:
                 downloadLocDialog();
                 return true;
-            case SETTINGS_HOME:
+/*             case SETTINGS_HOME:
                 homepageDialog();
                 return true;
-/*            case SETTINGS_SEARCHENGINE:
+           case SETTINGS_SEARCHENGINE:
                 searchDialog();
                 return true;
             case SETTINGS_SUGGESTIONS:

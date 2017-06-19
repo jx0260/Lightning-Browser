@@ -18,7 +18,7 @@
             android:key="pref_version"
             android:title="@string/version" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/licenses">
+    <PreferenceCategory android:title="@string/app_name_label">
         <Preference
             android:title="@string/app_name">
         </Preference>

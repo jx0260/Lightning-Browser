@@ -32,6 +32,7 @@ import acr.browser.lightning.utils.DownloadManager;
 import acr.browser.lightning.utils.UrlUtils;
 import acr.browser.lightning.version.entity.VersionEntity;
 import acr.browser.lightning.version.view.VersionChecker;
+import acr.browser.lightning.view.Handlers;
 import acr.browser.lightning.view.LightningView;
 import io.reactivex.disposables.Disposable;
 import retrofit2.Response;
@@ -186,10 +187,25 @@ public class BrowserPresenter implements IBrowserPresenter{
         final boolean isShown = tabToDelete.isShown();
         boolean shouldClose = mShouldClose && isShown && tabToDelete.isNewTab();
         final LightningView currentTab = mTabsModel.getCurrentTab();
-        if (mTabsModel.size() == 1 && currentTab != null &&
-            (UrlUtils.isStartPageUrl(currentTab.getUrl()) ||
-                currentTab.getUrl().equals(mPreferences.getHomepage()))) {
-            mView.closeActivity();
+        if (mTabsModel.size() == 1 && currentTab != null){
+//                && (UrlUtils.isStartPageUrl(currentTab.getUrl()) || currentTab.getUrl().equals(mPreferences.getHomepage()))) {
+//            mView.closeActivity();
+            if (isShown) {
+                mView.removeTabView();
+            }
+            boolean currentDeleted = mTabsModel.deleteTab(position);
+            if (currentDeleted) {
+                mView.notifyTabViewRemoved(position);
+
+                Handlers.MAIN.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        newTab(null, true);
+                        mView.notifyTabViewAdded();
+                    }
+                }, 200);
+            }
+            Log.i("aaa", "aaa");
             return;
         } else {
             if (isShown) {
@@ -205,7 +221,7 @@ public class BrowserPresenter implements IBrowserPresenter{
         mView.notifyTabViewRemoved(position);
 
         if (afterTab == null) {
-            mView.closeBrowser();
+//            mView.closeBrowser();
             return;
         } else if (afterTab != currentTab) {
             //TODO remove this?
@@ -453,16 +469,15 @@ public class BrowserPresenter implements IBrowserPresenter{
             public void onResponse(Response<SafeDomainVO> response) {
                 SafeDomainVO mSafeDomainVO = response.body();
                 List<String> safeUrls = mSafeDomainVO.getList();
-                if(null != safeUrls && safeUrls.isEmpty()){
+                if(null != safeUrls && !safeUrls.isEmpty()){
                     mSafeDomainListManager.addAllUrls(safeUrls);
                 }
             }
 
             @Override
-            public boolean onFailure(Throwable e) {
+            public void onFailure(Throwable e) {
                 super.onFailure(e);
                 Log.i("BrowserPresenter", Log.getStackTraceString(e));
-                return true;
             }
         });
     }

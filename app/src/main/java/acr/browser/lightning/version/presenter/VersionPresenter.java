@@ -48,9 +48,8 @@ public class VersionPresenter extends AeduBasePresenter<IVersionView, IVersionMo
             }
 
             @Override
-            public boolean onFailure(Throwable e) {
+            public void onFailure(Throwable e) {
                 getView().onFindMaxVersionFailed(e);
-                return true;
             }
         });
     }

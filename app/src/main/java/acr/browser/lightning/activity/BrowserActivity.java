@@ -13,6 +13,7 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -40,6 +41,7 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -64,6 +66,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -72,6 +76,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.anthonycr.bonsai.Completable;
@@ -1107,7 +1112,119 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     public void newTabButtonClicked() {
         mPresenter.newTab(null, true);
+
+//        showLock();
+//        showLockActivity();
     }
+
+
+    private WindowManager mWindowManager;
+    private RelativeLayout mLockView;
+    private FrameLayout contentContainer;
+
+    private LinearLayout lockTokenInputLl;
+    private Button showUnLockBtn;
+    private EditText lockTokenEt;
+    private TextView lockErrorTip;
+
+    private void showLockActivity(){
+        Intent intent = new Intent(this, LockScreenActivity.class);
+        startActivity(intent);
+    }
+
+    private void showLock() {
+        if (null != contentContainer) {
+            return;
+        }
+
+        mWindowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+
+        //加载布局文件
+        mLockView = (RelativeLayout)getLayoutInflater().inflate(R.layout.lock_view, null);
+        mLockView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+        //为View设置监听，以便处理用户的点击和拖动
+        lockTokenInputLl = (LinearLayout) mLockView.findViewById(R.id.ll_lock_token_input);
+
+        showUnLockBtn = (Button) mLockView.findViewById(R.id.btn_show_unLock);
+        showUnLockBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lockTokenInputLl.setVisibility(View.VISIBLE);
+                v.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        lockTokenEt = (EditText) mLockView.findViewById(R.id.et_lock_token);
+        lockErrorTip = (TextView) mLockView.findViewById(R.id.tv_lock_error_tip);
+        final String targetToken = "1234";
+
+        mLockView.findViewById(R.id.btn_unlock).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(TextUtils.isEmpty(lockTokenEt.getText().toString())){
+                    Toast.makeText(BrowserActivity.this, "口令为空！", Toast.LENGTH_SHORT).show();
+                } else {
+                    if(lockTokenEt.getText().toString().equals(targetToken)){
+                        unLock();
+                        Toast.makeText(BrowserActivity.this, "解锁成功！", Toast.LENGTH_SHORT).show();
+                    } else {
+                        lockErrorTip.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
+
+       /*为View设置参数*/
+        WindowManager.LayoutParams mLayoutParams = new WindowManager.LayoutParams();
+        //设置View默认的摆放位置
+        mLayoutParams.gravity = Gravity.LEFT | Gravity.TOP;
+        //设置window type
+        mLayoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+        //设置背景为透明
+        mLayoutParams.format = PixelFormat.RGBA_8888;
+        //注意该属性的设置很重要，FLAG_NOT_FOCUSABLE使浮动窗口不获取焦点,若不设置该属性，屏幕的其它位置点击无效，应为它们无法获取焦点
+        mLayoutParams.flags = WindowManager.LayoutParams.FLAG_FULLSCREEN
+                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS;
+        mLayoutParams.flags = 1280;
+        //设置视图的宽、高
+        mLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+        mLayoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+
+        //将视图添加到Window中
+        contentContainer = new FrameLayout(this) {
+
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent event) {
+                System.out.println("dispatchKeyEvent " + KeyEvent.keyCodeToString(event.getKeyCode()));
+                return true;
+            }
+
+            @Override
+            public boolean dispatchTouchEvent(MotionEvent ev) {
+                System.out.println("dispatchKeyEvent");
+                return super.dispatchTouchEvent(ev);
+            }
+        };
+        contentContainer.addView(mLockView);
+        mWindowManager.addView(contentContainer, mLayoutParams);
+//        System.out.println(contentContainer.getParent().getClass().getName());
+//        Method[] methods = contentContainer.getParent().getClass().getDeclaredMethods();
+//        for (Method method : methods) {
+//            System.out.println(method.getName());
+//        }
+    }
+
+    private void unLock() {
+        if (null == contentContainer) {
+            return;
+        }
+        mWindowManager.removeView(contentContainer);
+        mLockView = null;
+        contentContainer = null;
+    }
+
+
 
     @Override
     public void newTabButtonLongClicked() {
@@ -1407,11 +1524,13 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (query.isEmpty()) {
             return;
         }
-        String searchUrl = mSearchText + UrlUtils.QUERY_PLACE_HOLDER;
-        query = query.trim();
+//        不要搜索功能，直接打开网址
+//        String searchUrl = mSearchText + UrlUtils.QUERY_PLACE_HOLDER;
+//        query = query.trim();
         if (currentTab != null) {
             currentTab.stopLoading();
-            mPresenter.loadUrlInCurrentView(UrlUtils.smartUrlFilter(query, true, searchUrl));
+//            mPresenter.loadUrlInCurrentView(UrlUtils.smartUrlFilter(query, true, searchUrl));
+            mPresenter.loadUrlInCurrentView(query);
         }
     }
 

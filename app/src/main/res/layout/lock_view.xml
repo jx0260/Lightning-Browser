@@ -1,21 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#000000"
-    android:orientation="vertical">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:background="#363636"
+                android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="22dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="18dp"
+        android:src="@mipmap/lockpage_logo"/>
+
+    <LinearLayout
+        android:layout_width="238dp"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_centerInParent="true"
-        android:text="这是自定义锁"
-        android:textColor="#fff" />
+        android:gravity="center"
+        >
+
+        <ImageView
+            android:id="@+id/iv_lock_title"
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:paddingTop="26dp"
+            android:paddingLeft="45dp"
+            android:paddingBottom="26dp"
+            android:paddingRight="45dp"
+            android:src="@mipmap/lockpage_tip"
+            android:background="@drawable/bg_lock_white_corner"
+            />
+
+        <LinearLayout
+            android:id="@+id/ll_lock_token_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_lock_white_corner"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:padding="5dp"
+            android:visibility="invisible"
+            >
+
+            <TextView
+                android:layout_width="84dp"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/et_lock_token"
+                android:text="屏幕解锁口令："
+                android:textColor="@color/white"
+                android:textSize="12sp"/>
+
+            <EditText
+                android:id="@+id/et_lock_token"
+                android:layout_width="55dp"
+                android:layout_height="22dp"
+                android:background="@drawable/bg_lock_token_input"
+                android:inputType="number"
+                android:maxLength="4"
+                android:singleLine="true"
+                android:textSize="12sp"
+                android:paddingLeft="4dp"
+                />
+
+            <Button
+                android:id="@+id/btn_unlock"
+                android:layout_width="33dp"
+                android:layout_height="22dp"
+                android:layout_marginLeft="12dp"
+                android:background="@drawable/bg_lock_unlock_btn"
+                android:text="解锁"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_lock_error_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="口令有误呢！请重新输入口令~"
+            android:textSize="10sp"
+            android:textColor="@color/white"
+            android:visibility="invisible"
+            />
+    </LinearLayout>
 
     <Button
-        android:id="@+id/unlock"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onUploadClick"
-        android:text="点击解锁" />
+        android:id="@+id/btn_show_unLock"
+        android:layout_width="70dp"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/bg_btn_lock_show_unlock"
+        android:text="口令解锁"
+        android:textColor="@color/white"/>
+
+
 </RelativeLayout>

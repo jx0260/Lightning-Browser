@@ -106,6 +106,7 @@
     <string name="custom_url">自定义 URL</string>
     <string name="message_blocked_local">本地文件已被阻止加载</string>
     <string name="licenses">开源许可</string>
+    <string name="app_name_label">应用名</string>
     <string name="suggestion">搜索目标</string>
     <string name="block_ads">拦截广告</string>
     <string name="title_form_resubmission">重新提交表单</string>

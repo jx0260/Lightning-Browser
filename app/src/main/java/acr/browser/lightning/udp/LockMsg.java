@@ -8,7 +8,7 @@ package acr.browser.lightning.udp;
 public class LockMsg {
 
     private boolean lock;
-    private String token;
+    private String token;//解锁口令
 
     public boolean isLock() {
         return lock;
