@@ -7,16 +7,16 @@
                 android:orientation="vertical">
 
     <ImageView
-        android:layout_width="80dp"
-        android:layout_height="22dp"
+        android:layout_width="@dimen/dp80"
+        android:layout_height="@dimen/dp22"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginLeft="@dimen/dp20"
+        android:layout_marginTop="@dimen/dp18"
         android:src="@mipmap/lockpage_logo"/>
 
     <LinearLayout
-        android:layout_width="238dp"
+        android:layout_width="@dimen/dp238"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_centerInParent="true"
@@ -26,11 +26,11 @@
         <ImageView
             android:id="@+id/iv_lock_title"
             android:layout_width="match_parent"
-            android:layout_height="140dp"
-            android:paddingTop="26dp"
-            android:paddingLeft="45dp"
-            android:paddingBottom="26dp"
-            android:paddingRight="45dp"
+            android:layout_height="@dimen/dp140"
+            android:paddingTop="@dimen/dp26"
+            android:paddingLeft="@dimen/dp45"
+            android:paddingBottom="@dimen/dp26"
+            android:paddingRight="@dimen/dp45"
             android:src="@mipmap/lockpage_tip"
             android:background="@drawable/bg_lock_white_corner"
             />
@@ -40,41 +40,41 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_lock_white_corner"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="@dimen/dp10"
             android:gravity="center"
-            android:padding="5dp"
+            android:padding="@dimen/dp5"
             android:visibility="invisible"
             >
 
             <TextView
-                android:layout_width="84dp"
+                android:layout_width="@dimen/dp84"
                 android:layout_height="wrap_content"
                 android:labelFor="@+id/et_lock_token"
                 android:text="屏幕解锁口令："
                 android:textColor="@color/white"
-                android:textSize="12sp"/>
+                android:textSize="@dimen/sp12"/>
 
             <EditText
                 android:id="@+id/et_lock_token"
-                android:layout_width="55dp"
-                android:layout_height="22dp"
+                android:layout_width="@dimen/dp55"
+                android:layout_height="@dimen/dp22"
                 android:background="@drawable/bg_lock_token_input"
                 android:inputType="number"
                 android:maxLength="4"
                 android:singleLine="true"
-                android:textSize="12sp"
-                android:paddingLeft="4dp"
+                android:textSize="@dimen/sp12"
+                android:paddingLeft="@dimen/dp4"
                 />
 
             <Button
                 android:id="@+id/btn_unlock"
-                android:layout_width="33dp"
-                android:layout_height="22dp"
-                android:layout_marginLeft="12dp"
+                android:layout_width="@dimen/dp33"
+                android:layout_height="@dimen/dp22"
+                android:layout_marginLeft="@dimen/dp12"
                 android:background="@drawable/bg_lock_unlock_btn"
                 android:text="解锁"
                 android:textColor="@color/white"
-                android:textSize="12sp"
+                android:textSize="@dimen/sp12"
                 />
 
         </LinearLayout>
@@ -83,9 +83,9 @@
             android:id="@+id/tv_lock_error_tip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="@dimen/dp10"
             android:text="口令有误呢！请重新输入口令~"
-            android:textSize="10sp"
+            android:textSize="@dimen/sp10"
             android:textColor="@color/white"
             android:visibility="invisible"
             />
@@ -93,14 +93,15 @@
 
     <Button
         android:id="@+id/btn_show_unLock"
-        android:layout_width="70dp"
-        android:layout_height="30dp"
+        android:layout_width="@dimen/dp70"
+        android:layout_height="@dimen/dp30"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginBottom="@dimen/dp10"
+        android:layout_marginRight="@dimen/dp20"
         android:background="@drawable/bg_btn_lock_show_unlock"
         android:text="口令解锁"
+        android:textSize="@dimen/sp10"
         android:textColor="@color/white"/>
 
 

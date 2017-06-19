@@ -26,6 +26,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import acr.browser.lightning.R;
+import acr.browser.lightning.activity.LockScreenActivity;
 
 /**
  * 锁屏监听service
@@ -118,7 +119,8 @@ public class LockScreenMonitorService extends IntentService {
                         if (lockMsg.isLock()) {
                             // 锁屏
                             Log.i(TAG, "发起锁屏命令");
-                            showLock();
+//                            showLock();
+                            showLockActivity(lockMsg.getToken());
                         } else {
                             // 解锁
                             Log.i(TAG, "发起解锁命令");
@@ -157,6 +159,12 @@ public class LockScreenMonitorService extends IntentService {
 //        }
 //        return START_STICKY;
 //    }
+
+    private void showLockActivity(String rightToken){
+        Intent intent = new Intent(this, LockScreenActivity.class);
+        intent.putExtra(LockScreenActivity.RIGHT_TOKEN_KEY, "1234");
+        startActivity(intent);
+    }
 
     private void showLock() {
         if (null != contentContainer) {
@@ -210,11 +218,6 @@ public class LockScreenMonitorService extends IntentService {
         };
         contentContainer.addView(mFloatView);
         mWindowManager.addView(contentContainer, mLayoutParams);
-//        System.out.println(contentContainer.getParent().getClass().getName());
-//        Method[] methods = contentContainer.getParent().getClass().getDeclaredMethods();
-//        for (Method method : methods) {
-//            System.out.println(method.getName());
-//        }
     }
 
     private void clearLock() {

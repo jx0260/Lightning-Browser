@@ -9,7 +9,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -22,12 +21,15 @@ import acr.browser.lightning.R;
  * Created by Jin Liang on 2017/6/19.
  */
 
-public class LockScreenActivity extends Activity {
+public class LockScreenActivity extends Activity implements View.OnKeyListener {
 
     private static final String TAG = "LockScreenActivity";
 
+    public static final String RIGHT_TOKEN_KEY = "right_token_key";
+    // 正确口令
+    private String rightToken;
+
     private RelativeLayout mLockView;
-    private FrameLayout contentContainer;
 
     private LinearLayout lockTokenInputLl;
     private Button showUnLockBtn;
@@ -57,40 +59,29 @@ public class LockScreenActivity extends Activity {
 
         lockTokenEt = (EditText) mLockView.findViewById(R.id.et_lock_token);
         lockErrorTip = (TextView) mLockView.findViewById(R.id.tv_lock_error_tip);
-        final String targetToken = "1234";
+        rightToken = getIntent().getStringExtra(RIGHT_TOKEN_KEY);
 
         mLockView.findViewById(R.id.btn_unlock).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(TextUtils.isEmpty(lockTokenEt.getText().toString())){
-                    Toast.makeText(LockScreenActivity.this, "口令为空！", Toast.LENGTH_SHORT).show();
-                } else {
-                    if(lockTokenEt.getText().toString().equals(targetToken)){
-                        finish();
-                        Toast.makeText(LockScreenActivity.this, "解锁成功！", Toast.LENGTH_SHORT).show();
-                    } else {
-                        lockErrorTip.setVisibility(View.VISIBLE);
-                    }
-                }
+                unLock();
             }
         });
 
-//        //将视图添加到Window中
-//        contentContainer = new FrameLayout(this) {
-//
-//            @Override
-//            public boolean dispatchKeyEvent(KeyEvent event) {
-//                System.out.println("dispatchKeyEvent " + KeyEvent.keyCodeToString(event.getKeyCode()));
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean dispatchTouchEvent(MotionEvent ev) {
-//                System.out.println("dispatchKeyEvent");
-//                return super.dispatchTouchEvent(ev);
-//            }
-//        };
-//        contentContainer.addView(mLockView);
+        lockTokenEt.setOnKeyListener(this);
+    }
+
+    private void unLock() {
+        if(TextUtils.isEmpty(lockTokenEt.getText().toString())){
+            Toast.makeText(LockScreenActivity.this, "口令为空！", Toast.LENGTH_SHORT).show();
+        } else {
+            if(lockTokenEt.getText().toString().equals(rightToken)){
+                finish();
+                Toast.makeText(LockScreenActivity.this, "解锁成功", Toast.LENGTH_SHORT).show();
+            } else {
+                lockErrorTip.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     @Override
@@ -122,5 +113,18 @@ public class LockScreenActivity extends Activity {
             }
         }
         return true;
+    }
+
+
+    @Override
+    public boolean onKey(View v, int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_ENTER:
+                unLock();
+                return true;
+            default:
+                break;
+        }
+        return false;
     }
 }

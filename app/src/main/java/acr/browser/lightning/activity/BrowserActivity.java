@@ -1112,15 +1112,14 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
     @Override
     public void newTabButtonClicked() {
         mPresenter.newTab(null, true);
-
-//        showLock();
 //        showLockActivity();
+
+//        showLock();//windowManager实现
     }
 
 
     private WindowManager mWindowManager;
     private RelativeLayout mLockView;
-    private FrameLayout contentContainer;
 
     private LinearLayout lockTokenInputLl;
     private Button showUnLockBtn;
@@ -1129,20 +1128,17 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
 
     private void showLockActivity(){
         Intent intent = new Intent(this, LockScreenActivity.class);
+        intent.putExtra(LockScreenActivity.RIGHT_TOKEN_KEY, "1234");
         startActivity(intent);
     }
 
     private void showLock() {
-        if (null != contentContainer) {
-            return;
-        }
-
         mWindowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
 
         //加载布局文件
         mLockView = (RelativeLayout)getLayoutInflater().inflate(R.layout.lock_view, null);
         mLockView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
-        //为View设置监听，以便处理用户的点击和拖动
+
         lockTokenInputLl = (LinearLayout) mLockView.findViewById(R.id.ll_lock_token_input);
 
         showUnLockBtn = (Button) mLockView.findViewById(R.id.btn_show_unLock);
@@ -1184,44 +1180,21 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         mLayoutParams.format = PixelFormat.RGBA_8888;
         //注意该属性的设置很重要，FLAG_NOT_FOCUSABLE使浮动窗口不获取焦点,若不设置该属性，屏幕的其它位置点击无效，应为它们无法获取焦点
         mLayoutParams.flags = WindowManager.LayoutParams.FLAG_FULLSCREEN
-                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-                | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS;
+                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD;
         mLayoutParams.flags = 1280;
         //设置视图的宽、高
         mLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         mLayoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
 
-        //将视图添加到Window中
-        contentContainer = new FrameLayout(this) {
-
-            @Override
-            public boolean dispatchKeyEvent(KeyEvent event) {
-                System.out.println("dispatchKeyEvent " + KeyEvent.keyCodeToString(event.getKeyCode()));
-                return true;
-            }
-
-            @Override
-            public boolean dispatchTouchEvent(MotionEvent ev) {
-                System.out.println("dispatchKeyEvent");
-                return super.dispatchTouchEvent(ev);
-            }
-        };
-        contentContainer.addView(mLockView);
-        mWindowManager.addView(contentContainer, mLayoutParams);
-//        System.out.println(contentContainer.getParent().getClass().getName());
-//        Method[] methods = contentContainer.getParent().getClass().getDeclaredMethods();
-//        for (Method method : methods) {
-//            System.out.println(method.getName());
-//        }
+        mWindowManager.addView(mLockView, mLayoutParams);
     }
 
     private void unLock() {
-        if (null == contentContainer) {
+        if (null == mLockView) {
             return;
         }
-        mWindowManager.removeView(contentContainer);
+        mWindowManager.removeView(mLockView);
         mLockView = null;
-        contentContainer = null;
     }
 
 

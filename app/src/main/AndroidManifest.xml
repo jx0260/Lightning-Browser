@@ -175,7 +175,8 @@
         <activity android:name=".activity.LockScreenActivity"
                   android:configChanges="orientation|screenSize"
                   android:theme="@android:style/Theme.NoTitleBar"
-                  android:windowSoftInputMode="adjustResize">
+                  android:windowSoftInputMode="adjustResize"
+                  android:screenOrientation="landscape">
         </activity>
 
     </application>

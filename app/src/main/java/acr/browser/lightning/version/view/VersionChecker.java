@@ -6,6 +6,7 @@ import android.support.v4.content.FileProvider;
 
 import java.io.File;
 
+import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.version.entity.VersionEntity;
 import acr.browser.lightning.version.presenter.VersionPresenter;
 import acr.browser.lightning.version.vo.VersionCheckerVO;
@@ -30,8 +31,8 @@ public class VersionChecker implements IVersionView {
 
     public void check(OnCheckResultListener listener) {
         this.mOnCheckResultListener = listener;
-        // 类型7 表示远程控制客户端
-        presenter.findMaxVersion(7);
+        // 更新类型6 代表学启PAD客户端
+        presenter.findMaxVersion(Constants.VERSION_CHECK_TYPE);
     }
 
     public static Uri getUriForFile(Context context, File file) {

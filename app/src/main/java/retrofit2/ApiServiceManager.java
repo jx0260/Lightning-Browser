@@ -21,6 +21,7 @@ public class ApiServiceManager {
             T service = CrystalRetrofitFactory.create(HttpConfig.baseUrl, clazz);
             serviceMap.put(clazz, service);
             return service;
+
         }
     }
 
