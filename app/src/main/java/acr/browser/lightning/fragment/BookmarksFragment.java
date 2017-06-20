@@ -2,7 +2,6 @@ package acr.browser.lightning.fragment;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -34,12 +33,10 @@ import javax.inject.Inject;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.BookmarkUiModel;
-import acr.browser.lightning.activity.ReadingActivity;
 import acr.browser.lightning.activity.TabsManager;
 import acr.browser.lightning.animation.AnimationUtils;
 import acr.browser.lightning.app.BrowserApp;
 import acr.browser.lightning.browser.BookmarksView;
-import acr.browser.lightning.constant.Constants;
 import acr.browser.lightning.controller.UIController;
 import acr.browser.lightning.database.HistoryItem;
 import acr.browser.lightning.database.bookmark.BookmarkModel;
@@ -48,7 +45,6 @@ import acr.browser.lightning.favicon.FaviconModel;
 import acr.browser.lightning.preference.PreferenceManager;
 import acr.browser.lightning.utils.Preconditions;
 import acr.browser.lightning.utils.ThemeUtils;
-import acr.browser.lightning.view.LightningView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -177,8 +173,8 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             }
         });
         setupNavigationButton(view, R.id.action_add_bookmark, R.id.icon_star);
-        setupNavigationButton(view, R.id.action_reading, R.id.icon_reading);
-        setupNavigationButton(view, R.id.action_toggle_desktop, R.id.icon_desktop);
+//        setupNavigationButton(view, R.id.action_reading, R.id.icon_reading);
+//        setupNavigationButton(view, R.id.action_toggle_desktop, R.id.icon_desktop);
 
         mBookmarkAdapter = new BookmarkListAdapter(mFaviconModel, mFolderBitmap, mWebpageBitmap);
         mBookmarkAdapter.setOnItemClickListener(mItemClickListener);
@@ -322,7 +318,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
             case R.id.action_add_bookmark:
                 mUiController.bookmarkButtonClicked();
                 break;
-            case R.id.action_reading:
+            /*case R.id.action_reading:
                 LightningView currentTab = getTabsManager().getCurrentTab();
                 if (currentTab != null) {
                     Intent read = new Intent(getActivity(), ReadingActivity.class);
@@ -337,7 +333,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                     current.reload();
                     // TODO add back drawer closing
                 }
-                break;
+                break;*/
             default:
                 break;
         }

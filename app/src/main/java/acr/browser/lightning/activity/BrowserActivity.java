@@ -2337,16 +2337,16 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
                 currentTab.clearFindMatches();
                 mSearchBar.setVisibility(View.GONE);
                 break;
-            case R.id.action_reading:
-                Intent read = new Intent(this, ReadingActivity.class);
-                read.putExtra(Constants.LOAD_READING_URL, currentTab.getUrl());
-                startActivity(read);
-                break;
-            case R.id.action_toggle_desktop:
-                currentTab.toggleDesktopUA(this);
-                currentTab.reload();
-                closeDrawers(null);
-                break;
+//            case R.id.action_reading:
+//                Intent read = new Intent(this, ReadingActivity.class);
+//                read.putExtra(Constants.LOAD_READING_URL, currentTab.getUrl());
+//                startActivity(read);
+//                break;
+//            case R.id.action_toggle_desktop:
+//                currentTab.toggleDesktopUA(this);
+//                currentTab.reload();
+//                closeDrawers(null);
+//                break;
         }
     }
 

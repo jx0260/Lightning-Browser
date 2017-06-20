@@ -59,7 +59,7 @@
         android:orientation="horizontal"
         android:weightSum="3">
 
-        <FrameLayout
+        <!--<FrameLayout
             android:id="@+id/action_toggle_desktop"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -78,7 +78,7 @@
                 android:paddingRight="4dp"
                 android:paddingTop="4dp"
                 app:srcCompat="@drawable/ic_action_desktop"/>
-        </FrameLayout>
+        </FrameLayout>-->
 
         <FrameLayout
             android:id="@+id/action_add_bookmark"
@@ -101,7 +101,7 @@
                 app:srcCompat="@drawable/ic_action_star"/>
         </FrameLayout>
 
-        <FrameLayout
+        <!--<FrameLayout
             android:id="@+id/action_reading"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -120,6 +120,6 @@
                 android:paddingRight="4dp"
                 android:paddingTop="4dp"
                 app:srcCompat="@drawable/ic_action_reading"/>
-        </FrameLayout>
+        </FrameLayout>-->
     </LinearLayout>
 </LinearLayout>

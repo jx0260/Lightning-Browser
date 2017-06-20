@@ -109,12 +109,12 @@ public class LightningDialogBuilder {
                     uiController.handleNewTab(NewTab.BACKGROUND, item.getUrl());
                 }
             },
-            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof MainActivity) {
-                @Override
-                public void onClick() {
-                    uiController.handleNewTab(NewTab.INCOGNITO, item.getUrl());
-                }
-            },
+//            new BrowserDialog.Item(R.string.dialog_open_incognito_tab, activity instanceof MainActivity) {
+//                @Override
+//                public void onClick() {
+//                    uiController.handleNewTab(NewTab.INCOGNITO, item.getUrl());
+//                }
+//            },
             new BrowserDialog.Item(R.string.action_share) {
                 @Override
                 public void onClick() {
