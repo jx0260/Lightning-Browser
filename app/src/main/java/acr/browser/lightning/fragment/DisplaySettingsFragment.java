@@ -26,14 +26,14 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
 
     private static final String SETTINGS_HIDESTATUSBAR = "fullScreenOption";
     private static final String SETTINGS_FULLSCREEN = "fullscreen";
-    private static final String SETTINGS_VIEWPORT = "wideViewPort";
-    private static final String SETTINGS_OVERVIEWMODE = "overViewMode";
-    private static final String SETTINGS_REFLOW = "text_reflow";
-    private static final String SETTINGS_THEME = "app_theme";
+//    private static final String SETTINGS_VIEWPORT = "wideViewPort";
+//    private static final String SETTINGS_OVERVIEWMODE = "overViewMode";
+//    private static final String SETTINGS_REFLOW = "text_reflow";
+//    private static final String SETTINGS_THEME = "app_theme";
     private static final String SETTINGS_TEXTSIZE = "text_size";
     private static final String SETTINGS_DRAWERTABS = "cb_drawertabs";
     private static final String SETTINGS_SWAPTABS = "cb_swapdrawers";
-    private static final String SETTINGS_BLACK_STATUS = "black_status_bar";
+//    private static final String SETTINGS_BLACK_STATUS = "black_status_bar";
 
     private static final float XXLARGE = 30.0f;
     private static final float XLARGE = 26.0f;
@@ -63,46 +63,46 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
         mThemeOptions = this.getResources().getStringArray(R.array.themes);
         mCurrentTheme = mPreferenceManager.getUseTheme();
 
-        mTheme = findPreference(SETTINGS_THEME);
+//        mTheme = findPreference(SETTINGS_THEME);
         Preference textSize = findPreference(SETTINGS_TEXTSIZE);
         CheckBoxPreference cbStatus = (CheckBoxPreference) findPreference(SETTINGS_HIDESTATUSBAR);
         CheckBoxPreference cbFullScreen = (CheckBoxPreference) findPreference(SETTINGS_FULLSCREEN);
-        CheckBoxPreference cbViewPort = (CheckBoxPreference) findPreference(SETTINGS_VIEWPORT);
-        CheckBoxPreference cbOverview = (CheckBoxPreference) findPreference(SETTINGS_OVERVIEWMODE);
-        CheckBoxPreference cbReflow = (CheckBoxPreference) findPreference(SETTINGS_REFLOW);
-        CheckBoxPreference cbBlackStatus = (CheckBoxPreference) findPreference(SETTINGS_BLACK_STATUS);
+//        CheckBoxPreference cbViewPort = (CheckBoxPreference) findPreference(SETTINGS_VIEWPORT);
+//        CheckBoxPreference cbOverview = (CheckBoxPreference) findPreference(SETTINGS_OVERVIEWMODE);
+//        CheckBoxPreference cbReflow = (CheckBoxPreference) findPreference(SETTINGS_REFLOW);
+//        CheckBoxPreference cbBlackStatus = (CheckBoxPreference) findPreference(SETTINGS_BLACK_STATUS);
         CheckBoxPreference cbDrawerTabs = (CheckBoxPreference) findPreference(SETTINGS_DRAWERTABS);
         CheckBoxPreference cbSwapTabs = (CheckBoxPreference) findPreference(SETTINGS_SWAPTABS);
 
-        mTheme.setOnPreferenceClickListener(this);
+//        mTheme.setOnPreferenceClickListener(this);
         textSize.setOnPreferenceClickListener(this);
         cbStatus.setOnPreferenceChangeListener(this);
         cbFullScreen.setOnPreferenceChangeListener(this);
-        cbViewPort.setOnPreferenceChangeListener(this);
-        cbOverview.setOnPreferenceChangeListener(this);
-        cbReflow.setOnPreferenceChangeListener(this);
-        cbBlackStatus.setOnPreferenceChangeListener(this);
+//        cbViewPort.setOnPreferenceChangeListener(this);
+//        cbOverview.setOnPreferenceChangeListener(this);
+//        cbReflow.setOnPreferenceChangeListener(this);
+//        cbBlackStatus.setOnPreferenceChangeListener(this);
         cbDrawerTabs.setOnPreferenceChangeListener(this);
         cbSwapTabs.setOnPreferenceChangeListener(this);
 
         cbStatus.setChecked(mPreferenceManager.getHideStatusBarEnabled());
         cbFullScreen.setChecked(mPreferenceManager.getFullScreenEnabled());
-        cbViewPort.setChecked(mPreferenceManager.getUseWideViewportEnabled());
-        cbOverview.setChecked(mPreferenceManager.getOverviewModeEnabled());
-        cbReflow.setChecked(mPreferenceManager.getTextReflowEnabled());
-        cbBlackStatus.setChecked(mPreferenceManager.getUseBlackStatusBar());
+//        cbViewPort.setChecked(mPreferenceManager.getUseWideViewportEnabled());
+//        cbOverview.setChecked(mPreferenceManager.getOverviewModeEnabled());
+//        cbReflow.setChecked(mPreferenceManager.getTextReflowEnabled());
+//        cbBlackStatus.setChecked(mPreferenceManager.getUseBlackStatusBar());
         cbDrawerTabs.setChecked(mPreferenceManager.getShowTabsInDrawer(true));
         cbSwapTabs.setChecked(mPreferenceManager.getBookmarksAndTabsSwapped());
 
-        mTheme.setSummary(mThemeOptions[mPreferenceManager.getUseTheme()]);
+//        mTheme.setSummary(mThemeOptions[mPreferenceManager.getUseTheme()]);
     }
 
     @Override
     public boolean onPreferenceClick(@NonNull Preference preference) {
         switch (preference.getKey()) {
-            case SETTINGS_THEME:
-                themePicker();
-                return true;
+//            case SETTINGS_THEME:
+//                themePicker();
+//                return true;
             case SETTINGS_TEXTSIZE:
                 textSizePicker();
                 return true;
@@ -125,24 +125,24 @@ public class DisplaySettingsFragment extends LightningPreferenceFragment impleme
             case SETTINGS_FULLSCREEN:
                 mPreferenceManager.setFullScreenEnabled(checked);
                 return true;
-            case SETTINGS_VIEWPORT:
-                mPreferenceManager.setUseWideViewportEnabled(checked);
-                return true;
-            case SETTINGS_OVERVIEWMODE:
-                mPreferenceManager.setOverviewModeEnabled(checked);
-                return true;
-            case SETTINGS_REFLOW:
-                mPreferenceManager.setTextReflowEnabled(checked);
-                return true;
+//            case SETTINGS_VIEWPORT:
+//                mPreferenceManager.setUseWideViewportEnabled(checked);
+//                return true;
+//            case SETTINGS_OVERVIEWMODE:
+//                mPreferenceManager.setOverviewModeEnabled(checked);
+//                return true;
+//            case SETTINGS_REFLOW:
+//                mPreferenceManager.setTextReflowEnabled(checked);
+//                return true;
             case SETTINGS_DRAWERTABS:
                 mPreferenceManager.setShowTabsInDrawer(checked);
                 return true;
             case SETTINGS_SWAPTABS:
                 mPreferenceManager.setBookmarkAndTabsSwapped(checked);
                 return true;
-            case SETTINGS_BLACK_STATUS:
-                mPreferenceManager.setUseBlackStatusBar(checked);
-                return true;
+//            case SETTINGS_BLACK_STATUS:
+//                mPreferenceManager.setUseBlackStatusBar(checked);
+//                return true;
             default:
                 return false;
         }

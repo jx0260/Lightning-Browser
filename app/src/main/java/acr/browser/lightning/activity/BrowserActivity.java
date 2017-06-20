@@ -437,6 +437,10 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             if (launchedFromHistory) {
                 intent = null;
             }
+
+            // 默认打开主页 只有此句是后加的
+            intent.setData(Uri.parse(Constants.DEFAULT_HOME_PAGE));
+
             mPresenter.setupTabs(intent);
             setIntent(null);
             mProxyUtils.checkForProxy(this);

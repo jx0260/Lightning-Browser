@@ -213,7 +213,7 @@ public class PreferenceManager {
     }
 
     public boolean getRestoreLostTabsEnabled() {
-        return mPrefs.getBoolean(Name.RESTORE_LOST_TABS, true);
+        return mPrefs.getBoolean(Name.RESTORE_LOST_TABS, false);
     }
 
     @Nullable
@@ -243,7 +243,7 @@ public class PreferenceManager {
     }
 
     public int getUrlBoxContentChoice() {
-        return mPrefs.getInt(Name.URL_BOX_CONTENTS, 0);
+        return mPrefs.getInt(Name.URL_BOX_CONTENTS, 1);
     }
 
     public int getUseTheme() {

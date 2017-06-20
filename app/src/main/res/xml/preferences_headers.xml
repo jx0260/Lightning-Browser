@@ -12,9 +12,9 @@
     <!--<header
         android:fragment="acr.browser.lightning.fragment.PrivacySettingsFragment"
         android:title="@string/settings_privacy"/>-->
-    <header
+    <!--<header
         android:fragment="acr.browser.lightning.fragment.AdvancedSettingsFragment"
-        android:title="@string/settings_advanced"/>
+        android:title="@string/settings_advanced"/>-->
 
     <header
         android:fragment="acr.browser.lightning.fragment.CheckUpdateFragment"

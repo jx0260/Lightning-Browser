@@ -86,7 +86,8 @@ public final class Constants {
     // 默认主页
     public static final String DEFAULT_HOME_PAGE = "http://218.25.139.161:10046/sunrise/login/login.do";
     // 导航页
-    public static final String NAVIGATE_PAGE = "http://dao345.com/";
+//    public static final String NAVIGATE_PAGE = "http://dao345.com/";
+    public static final String NAVIGATE_PAGE = "http://218.25.139.163:13691/megrez/picture/apks/syb/appindex/index.html";
 
     // 更新功能 类型
     public static final int VERSION_CHECK_TYPE = 6; // 更新类型6 代表学启PAD客户端
