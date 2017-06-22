@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -111,6 +112,7 @@ public class LockScreenMonitorService extends IntentService {
                 // 发送的数据包
                 DatagramPacket dataPacket = new DatagramPacket(resultByteArray, resultByteArray.length, teacherAddress, teacherPort);
                 sendDataSocket.send(dataPacket);
+                Log.i(TAG, "发送确认包:地址"+teacherAddress.toString()+" 端口"+teacherPort+" 命令号"+commandId);
 
                 String dataStr = new String(resultByteArray, 16, resultByteArray.length-16);
                 if(commandId == CommandConstants.LOCK_SCREEN){
@@ -119,12 +121,14 @@ public class LockScreenMonitorService extends IntentService {
                         if (lockMsg.isLock()) {
                             // 锁屏
                             Log.i(TAG, "发起锁屏命令");
+                            Log.i(TAG, "解锁口令是："+lockMsg.getToken());
 //                            showLock();
                             showLockActivity(lockMsg.getToken());
                         } else {
                             // 解锁
                             Log.i(TAG, "发起解锁命令");
-                            clearLock();
+//                            clearLock();
+                            hideLockActivity();
                         }
                     }catch (Exception e){
                     }
@@ -162,7 +166,8 @@ public class LockScreenMonitorService extends IntentService {
 
     private void showLockActivity(String rightToken){
         Intent intent = new Intent(this, LockScreenActivity.class);
-        intent.putExtra(LockScreenActivity.RIGHT_TOKEN_KEY, "1234");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(LockScreenActivity.RIGHT_TOKEN_KEY, rightToken);
         startActivity(intent);
     }
 
@@ -227,6 +232,11 @@ public class LockScreenMonitorService extends IntentService {
         mWindowManager.removeView(contentContainer);
         mFloatView = null;
         contentContainer = null;
+    }
+
+    private void hideLockActivity(){
+        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(this);
+        lbm.sendBroadcast(new Intent(LockScreenActivity.ACTION_CLOSE_LOCK_ACTIVITY));
     }
 
 }

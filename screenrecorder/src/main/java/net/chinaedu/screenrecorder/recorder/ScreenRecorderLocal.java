@@ -46,8 +46,6 @@ public class ScreenRecorderLocal extends Thread {
     private String mDstPath;
     private MediaProjection mMediaProjection;
 
-    // parameters for the encoder
-    private static final String MIME_TYPE = "video/avc"; // H.264 Advanced Video Coding
     private static final int TIMEOUT_US = 0;
 
     private MediaCodec mEncoder;
@@ -203,7 +201,8 @@ public class ScreenRecorderLocal extends Thread {
     }
 
     private void prepareEncoder() throws IOException {
-        MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE, mWidth, mHeight);
+        //H.264 Advanced Video Coding
+        MediaFormat format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, mWidth, mHeight);
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         format.setInteger(MediaFormat.KEY_BIT_RATE, mBitRate);
         //每秒15帧
@@ -212,7 +211,7 @@ public class ScreenRecorderLocal extends Thread {
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
 
         Log.d(TAG, "created video format: " + format);
-        mEncoder = MediaCodec.createEncoderByType(MIME_TYPE);
+        mEncoder = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC);
         mEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         mSurface = mEncoder.createInputSurface();
         Log.d(TAG, "created input surface: " + mSurface);

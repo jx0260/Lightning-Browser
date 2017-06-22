@@ -1507,7 +1507,7 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
         if (currentTab != null) {
             currentTab.stopLoading();
 //            mPresenter.loadUrlInCurrentView(UrlUtils.smartUrlFilter(query, true, searchUrl));
-            mPresenter.loadUrlInCurrentView(query);
+            mPresenter.loadUrlInCurrentView(UrlUtils.smartUrlFilter(query, false, ""));
         }
     }
 

@@ -1,8 +1,13 @@
 package acr.browser.lightning.activity;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -25,6 +30,8 @@ public class LockScreenActivity extends Activity implements View.OnKeyListener {
 
     private static final String TAG = "LockScreenActivity";
 
+    public static final String ACTION_CLOSE_LOCK_ACTIVITY = "action_close_lock_activity";
+
     public static final String RIGHT_TOKEN_KEY = "right_token_key";
     // 正确口令
     private String rightToken;
@@ -43,6 +50,14 @@ public class LockScreenActivity extends Activity implements View.OnKeyListener {
         //加载布局文件
         mLockView = (RelativeLayout)getLayoutInflater().inflate(R.layout.lock_view, null);
         setContentView(mLockView);
+
+        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(this);
+        lbm.registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                finish();
+            }
+        }, new IntentFilter(ACTION_CLOSE_LOCK_ACTIVITY));
 
         mLockView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
 

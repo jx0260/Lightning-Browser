@@ -96,17 +96,14 @@ public class ScreenRecorder extends Thread {
     public void run() {
         try {
             prepareEncoder();
-//            mMuxer = new MediaMuxer(mDstPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
             mVirtualDisplay = mMediaProjection.createVirtualDisplay(TAG + "-display",
                     mWidth, mHeight, mDpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC,
                     mSurface, null, null);
             Log.d(TAG, "created virtual display: " + mVirtualDisplay);
             recordVirtualDisplay();
-        }
-        catch (Exception e){
+        } catch (Exception e){
             throw new RuntimeException(e);
-        }
-        finally {
+        } finally {
             release();
         }
     }
