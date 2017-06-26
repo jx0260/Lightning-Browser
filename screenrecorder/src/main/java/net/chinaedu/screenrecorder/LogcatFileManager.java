@@ -38,10 +38,10 @@ public class LogcatFileManager {
         String folderPath = null;
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             folderPath = Environment.getExternalStorageDirectory().getAbsolutePath()
-                    + File.separator + "ScreenRecorderLog";
+                    + File.separator + "chinaeduBrowser";
         } else {
             folderPath = context.getFilesDir().getAbsolutePath()
-                    + File.separator + "ScreenRecorderLog";
+                    + File.separator + "chinaeduBrowser";
         }
         LogcatFileManager.getInstance().start(folderPath);
     }

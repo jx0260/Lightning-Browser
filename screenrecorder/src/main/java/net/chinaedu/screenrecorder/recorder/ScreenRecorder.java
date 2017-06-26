@@ -41,17 +41,12 @@ public class ScreenRecorder extends Thread {
     private int mBitRate;
     private int mDpi;
     private int mFrame;
-    private String mDstPath;
     private MediaProjection mMediaProjection;
     // parameters for the encoder
     private static final String MIME_TYPE = "video/avc"; // H.264 Advanced Video Coding
-    private static final int TIMEOUT_US = 10000;
 
     private MediaCodec mEncoder;
     private Surface mSurface;
-//    private MediaMuxer mMuxer;
-//    private boolean mMuxerStarted = false;
-//    private int mVideoTrackIndex = -1;
     private AtomicBoolean mQuit = new AtomicBoolean(false);
     private MediaCodec.BufferInfo mBufferInfo = new MediaCodec.BufferInfo();
     private VirtualDisplay mVirtualDisplay;
@@ -67,7 +62,7 @@ public class ScreenRecorder extends Thread {
         mOnStateListener = listener;
     }
 
-    public ScreenRecorder(int width, int height, int bitrate, int frame, int dpi, MediaProjection mp, String dstPath, Socket socket) {
+    public ScreenRecorder(int width, int height, int bitrate, int frame, int dpi, MediaProjection mp, Socket socket) {
         super(TAG);
         mWidth = width;
         mHeight = height;
@@ -75,15 +70,8 @@ public class ScreenRecorder extends Thread {
         mFrame = frame;
         mDpi = dpi;
         mMediaProjection = mp;
-        mDstPath = dstPath;
         mSocket = socket;
     }
-
-
-//    public ScreenRecorder(MediaProjection mp) {
-//        // 480p 2Mbps
-//        this(640, 480, 2000000, 1, mp, "/sdcard/test.mp4", null);
-//    }
 
     /**
      * stop task
@@ -100,34 +88,27 @@ public class ScreenRecorder extends Thread {
                     mWidth, mHeight, mDpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC,
                     mSurface, null, null);
             Log.d(TAG, "created virtual display: " + mVirtualDisplay);
-            recordVirtualDisplay();
+
+            while (!mQuit.get()) {
+                int index = mEncoder.dequeueOutputBuffer(mBufferInfo, 0);
+                Log.i(TAG, "dequeue output buffer index=" + index);
+                if (index == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
+                    resetOutputFormat();
+                } else if (index == MediaCodec.INFO_TRY_AGAIN_LATER) {
+                    Log.d(TAG, "retrieving buffers time out!");
+                    try {
+                        // wait 10ms
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                    }
+                } else if (index >= 0) {
+                    encodeToVideoTrack(index);
+                }
+            }
         } catch (Exception e){
             throw new RuntimeException(e);
         } finally {
             release();
-        }
-    }
-
-    private void recordVirtualDisplay() {
-        while (!mQuit.get()) {
-            int index = mEncoder.dequeueOutputBuffer(mBufferInfo, 0);
-            Log.i(TAG, "dequeue output buffer index=" + index);
-            if (index == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                resetOutputFormat();
-
-            } else if (index == MediaCodec.INFO_TRY_AGAIN_LATER) {
-                Log.d(TAG, "retrieving buffers time out!");
-                try {
-                    // wait 10ms
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                }
-            } else if (index >= 0) {
-//                if (!mMuxerStarted) {
-//                    throw new IllegalStateException("MediaMuxer dose not call addTrack(format) ");
-//                }
-                encodeToVideoTrack(index);
-            }
         }
     }
 
@@ -153,8 +134,6 @@ public class ScreenRecorder extends Thread {
             encodedData.position(mBufferInfo.offset);
             encodedData.limit(mBufferInfo.offset + mBufferInfo.size);
 
-//            mMuxer.writeSampleData(mVideoTrackIndex, encodedData, mBufferInfo);
-
             try {
                 byte[] outBytes = new byte[mBufferInfo.size];
                 encodedData.get(outBytes);
@@ -174,23 +153,20 @@ public class ScreenRecorder extends Thread {
     }
 
     private void resetOutputFormat() {
-        //should happen before receiving buffers, and should only happen once
-//        if (mMuxerStarted) {
-//            throw new IllegalStateException("output format already changed!");
-//        }
-//        MediaFormat newFormat = mEncoder.getOutputFormat();
-//
-//        Log.i(TAG, "output format changed.\n new format: " + newFormat.toString());
-//        mVideoTrackIndex = mMuxer.addTrack(newFormat);
-//        mMuxer.start();
-//        mMuxerStarted = true;
-//        Log.i(TAG, "started media muxer, videoIndex=" + mVideoTrackIndex);
+        MediaFormat newFormat = mEncoder.getOutputFormat();
+
+        Log.i(TAG, "output format changed.\n new format: " + newFormat.toString());
+        try {
+            mSocket.getOutputStream().write(newFormat.getByteBuffer("csd-0").array());//sps信息
+            mSocket.getOutputStream().write(newFormat.getByteBuffer("csd-1").array());//pps信息
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void prepareEncoder() throws IOException {
         MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE, mWidth, mHeight);
-        format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
-                MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+        format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         format.setInteger(MediaFormat.KEY_BIT_RATE, mBitRate);
         //每秒15帧
         format.setInteger(MediaFormat.KEY_FRAME_RATE, mFrame);
@@ -214,14 +190,6 @@ public class ScreenRecorder extends Thread {
         if (mVirtualDisplay != null) {
             mVirtualDisplay.release();
         }
-//        if (mMediaProjection != null) {
-//            mMediaProjection.stop();
-//        }
-//        if (mMuxer != null) {
-//            mMuxer.stop();
-//            mMuxer.release();
-//            mMuxer = null;
-//        }
         releaseClient();
     }
 

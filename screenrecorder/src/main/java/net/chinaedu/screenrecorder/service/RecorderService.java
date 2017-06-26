@@ -141,7 +141,6 @@ public class RecorderService extends Service {
     @Override
     public void onCreate() {
 //        android.os.Debug.waitForDebugger();
-
         super.onCreate();
         Log.i("RecorderService", "onCreate");
 
@@ -172,32 +171,20 @@ public class RecorderService extends Service {
         if(mFile.exists()){
             mFile.delete();
         }
-        mRecorderLocal = new ScreenRecorderLocal(AppContext.getInstance().getWidth(),
+
+        mRecorder = new ScreenRecorder(AppContext.getInstance().getWidth(),
                 AppContext.getInstance().getHeight(),
                 AppContext.getInstance().getBitRate(),
                 AppContext.getInstance().getFrame(),
-                mDpi, mMediaProjection, mFile.getAbsolutePath());
-
-        mRecorderLocal.setOnStateListener(new ScreenRecorderLocal.OnStateListener(){
+                mDpi, mMediaProjection, mVideoSocket);
+        mRecorder.setOnStateListener(new ScreenRecorder.OnStateListener(){
             @Override
-            public void onWriteFinish() {
-                mRecorder = new ScreenRecorder(AppContext.getInstance().getWidth(),
-                        AppContext.getInstance().getHeight(),
-                        AppContext.getInstance().getBitRate(),
-                        AppContext.getInstance().getFrame(),
-                        mDpi, mMediaProjection, mFile.getAbsolutePath(), mVideoSocket);
-                mRecorder.setOnStateListener(new ScreenRecorder.OnStateListener(){
-                    @Override
-                    public void onSocketClose() {
-                        releaseClient();
-                        hideTeacherLookingScreenTip();
-                    }
-                });
-                mRecorder.start();
+            public void onSocketClose() {
+                releaseClient();
+                hideTeacherLookingScreenTip();
             }
         });
-        mRecorderLocal.start();
-
+        mRecorder.start();
         return true;
     }
 
@@ -262,24 +249,28 @@ public class RecorderService extends Service {
                     Socket socket = mVideoServerSocket.accept();
                     releaseClient();
                     mVideoSocket = socket;
-                    InputStream iptStream = mVideoSocket.getInputStream();
-                    byte[] bytes = new byte[50];//就是一个老师名字 不能超过50个字节
-                    int length = 0;
-                    StringBuilder resultSb = new StringBuilder();
-                    length = iptStream.read(bytes);
-                    if(length>0){
-                        byte[] tmpBytes = new byte[length];
-                        System.arraycopy(bytes, 0, tmpBytes, 0, length);
-                        resultSb.append(new String(tmpBytes));
-                    }
-                    int index = resultSb.indexOf("\\r\\n");
-                    if(index > 0){
-                        teacherName = resultSb.substring(0, index);
-                    }
+                    initTeacherName();
                     mainHandler.sendEmptyMessage(0);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+        }
+
+        private void initTeacherName() throws IOException {
+            InputStream iptStream = mVideoSocket.getInputStream();
+            byte[] bytes = new byte[50];//就是一个老师名字 不能超过50个字节
+            int length = 0;
+            StringBuilder resultSb = new StringBuilder();
+            length = iptStream.read(bytes);
+            if(length>0){
+                byte[] tmpBytes = new byte[length];
+                System.arraycopy(bytes, 0, tmpBytes, 0, length);
+                resultSb.append(new String(tmpBytes));
+            }
+            int index = resultSb.indexOf("\\r\\n");
+            if(index > 0){
+                teacherName = resultSb.substring(0, index);
             }
         }
     }

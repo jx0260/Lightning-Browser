@@ -44,12 +44,14 @@ public class LockScreenMonitorService extends IntentService {
 
     private DatagramSocket sendDataSocket;
 
+    private boolean isLocked = false;
 
     private WindowManager mWindowManager;
     private LayoutInflater mLayoutInflater;
     private View mFloatView;
 
     private FrameLayout contentContainer;
+    private LockScreenMonitorService mService;
 
     public LockScreenMonitorService(){
         this("lockScreen-monitor-01");
@@ -66,6 +68,7 @@ public class LockScreenMonitorService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
+        mService = this;
 
         mWindowManager = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
         mLayoutInflater = LayoutInflater.from(this);
@@ -98,6 +101,7 @@ public class LockScreenMonitorService extends IntentService {
             DatagramPacket datagramPacketToReceive = new DatagramPacket(dataBytes, RECEIVE_LENGTH);
             while(true){
                 datagramSocket.receive(datagramPacketToReceive);
+                Log.i(TAG, "收到数据包"+datagramPacketToReceive);
                 byte[] resultByteArray = new byte[datagramPacketToReceive.getLength()];
                 System.arraycopy(datagramPacketToReceive.getData(), 0, resultByteArray, 0, datagramPacketToReceive.getLength());
 
@@ -112,7 +116,7 @@ public class LockScreenMonitorService extends IntentService {
                 // 发送的数据包
                 DatagramPacket dataPacket = new DatagramPacket(resultByteArray, resultByteArray.length, teacherAddress, teacherPort);
                 sendDataSocket.send(dataPacket);
-                Log.i(TAG, "发送确认包:地址"+teacherAddress.toString()+" 端口"+teacherPort+" 命令号"+commandId);
+                Log.i(TAG, "发送确认包(id "+ serialId +"):地址"+teacherAddress.toString()+" 端口"+teacherPort+" 命令号"+commandId);
 
                 String dataStr = new String(resultByteArray, 16, resultByteArray.length-16);
                 if(commandId == CommandConstants.LOCK_SCREEN){
@@ -120,15 +124,20 @@ public class LockScreenMonitorService extends IntentService {
                         LockMsg lockMsg = mGson.fromJson(dataStr, LockMsg.class);
                         if (lockMsg.isLock()) {
                             // 锁屏
-                            Log.i(TAG, "发起锁屏命令");
-                            Log.i(TAG, "解锁口令是："+lockMsg.getToken());
+                            Log.i(TAG, "执行锁屏, 解锁口令是："+lockMsg.getToken());
 //                            showLock();
-                            showLockActivity(lockMsg.getToken());
+                            if(!isLocked){
+                                showLockActivity(lockMsg.getToken());
+                                isLocked = true;
+                            }
                         } else {
                             // 解锁
-                            Log.i(TAG, "发起解锁命令");
+                            Log.i(TAG, "执行解锁");
 //                            clearLock();
-                            hideLockActivity();
+                            if(isLocked){
+                                hideLockActivity();
+                                isLocked = false;
+                            }
                         }
                     }catch (Exception e){
                     }
@@ -166,7 +175,7 @@ public class LockScreenMonitorService extends IntentService {
 
     private void showLockActivity(String rightToken){
         Intent intent = new Intent(this, LockScreenActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra(LockScreenActivity.RIGHT_TOKEN_KEY, rightToken);
         startActivity(intent);
     }
@@ -235,7 +244,7 @@ public class LockScreenMonitorService extends IntentService {
     }
 
     private void hideLockActivity(){
-        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(this);
+        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(mService);
         lbm.sendBroadcast(new Intent(LockScreenActivity.ACTION_CLOSE_LOCK_ACTIVITY));
     }
 
