@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -21,9 +20,7 @@ import android.widget.TextView;
 
 import net.chinaedu.screenrecorder.AppContext;
 import net.chinaedu.screenrecorder.recorder.ScreenRecorder;
-import net.chinaedu.screenrecorder.recorder.ScreenRecorderLocal;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
@@ -35,38 +32,38 @@ import java.net.Socket;
 
 public class RecorderService extends Service {
 
-    private static final int REQUEST_CODE = 1;
     private ScreenRecorder mRecorder;
-    private ScreenRecorderLocal mRecorderLocal;
-
     /**
      * 视频socket
      */
     private ServerSocket mVideoServerSocket;
     private Socket mVideoSocket;
 
-    /**
-     * 交互socket
-     */
-//    private ServerSocket mMsgServerSocket;
-//    private Socket mMsgSocket;
-
     private MediaProjection mMediaProjection;
-
     private VideoSocketThread mVideoSocketThread;
-
     private Messenger mMessenger;
-
     private int mDpi = 1;
-
-    private File mFile;
 
     private String teacherName;
     private TextView tipTv;
 
-    /**
-     * 用于监听新用户tcp连接
-     */
+    @Override
+    public void onCreate() {
+//        android.os.Debug.waitForDebugger();
+        super.onCreate();
+        Log.i("RecorderService", "onCreate");
+
+        mMessenger = new Messenger(startHandler);
+
+        try {
+            mVideoServerSocket = new ServerSocket(6000);
+            mVideoSocketThread = new VideoSocketThread();
+            mVideoSocketThread.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     Handler mainHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -137,26 +134,6 @@ public class RecorderService extends Service {
         }
     }
 
-
-    @Override
-    public void onCreate() {
-//        android.os.Debug.waitForDebugger();
-        super.onCreate();
-        Log.i("RecorderService", "onCreate");
-
-        mFile = new File( Environment.getExternalStorageDirectory() + File.separator +"test.mp4");
-
-        mMessenger = new Messenger(startHandler);
-
-        try {
-            mVideoServerSocket = new ServerSocket(6000);
-            mVideoSocketThread = new VideoSocketThread();
-            mVideoSocketThread.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return super.onStartCommand(intent, flags, startId);
@@ -167,11 +144,6 @@ public class RecorderService extends Service {
             releaseClient();
             return false;
         }
-
-        if(mFile.exists()){
-            mFile.delete();
-        }
-
         mRecorder = new ScreenRecorder(AppContext.getInstance().getWidth(),
                 AppContext.getInstance().getHeight(),
                 AppContext.getInstance().getBitRate(),

@@ -11,7 +11,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.util.Log;
 import android.view.KeyEvent;
 
 import net.chinaedu.screenrecorder.service.RecorderService;
@@ -26,10 +25,6 @@ public class RequestRecorderActivity extends Activity {
     private MediaProjectionManager mMediaProjectionManager;
     private MediaProjection mMediaProjection;
     private RecorderService mRecorderService;
-//    private int mWidth = 360;
-//    private int mHeight = 642;
-//    private int mBitrate = 25000000;
-//    private int mDpi = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

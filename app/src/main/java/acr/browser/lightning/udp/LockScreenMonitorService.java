@@ -53,6 +53,9 @@ public class LockScreenMonitorService extends IntentService {
     private FrameLayout contentContainer;
     private LockScreenMonitorService mService;
 
+    // 发送确认包 目标端口
+    private int teacherPort = 29011;
+
     public LockScreenMonitorService(){
         this("lockScreen-monitor-01");
     }
@@ -112,7 +115,6 @@ public class LockScreenMonitorService extends IntentService {
                 int teacherIp = byteBuffer.getInt(12);
 
                 InetAddress teacherAddress = InetAddress.getByName(IpUtil.intToIp(teacherIp));
-                int teacherPort = datagramPacketToReceive.getPort();
                 // 发送的数据包
                 DatagramPacket dataPacket = new DatagramPacket(resultByteArray, resultByteArray.length, teacherAddress, teacherPort);
                 sendDataSocket.send(dataPacket);

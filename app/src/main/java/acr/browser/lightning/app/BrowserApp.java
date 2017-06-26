@@ -20,7 +20,6 @@ import net.chinaedu.aedu.utils.LogUtils;
 import net.chinaedu.screenrecorder.AppContext;
 import net.chinaedu.screenrecorder.LogcatFileManager;
 import net.chinaedu.screenrecorder.service.RecorderService;
-import net.chinaedu.screenrecorder.utils.AdbUtils;
 import net.chinaedu.screenrecorder.utils.PreferenceService;
 
 import java.io.BufferedReader;
@@ -148,6 +147,7 @@ public class BrowserApp extends Application {
         QbSdk.initX5Environment(getApplicationContext(), cb);
 
         // ========   远程控制      =====================
+        initData();
         startService(new Intent(this, RecorderService.class));
 
         // 全局日志管理
@@ -155,8 +155,6 @@ public class BrowserApp extends Application {
         logcatFileManager.startLogcatManager(this);
 
 //        Thread.setDefaultUncaughtExceptionHandler(new ScreenRecorderExceptionHandler(this, null));
-
-        initData();
     }
 
     private void initData(){
@@ -178,7 +176,7 @@ public class BrowserApp extends Application {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-        AdbUtils.adbStart(this);
+//        AdbUtils.adbStart(this);
     }
 
     public void execCommand(String command) throws IOException {
