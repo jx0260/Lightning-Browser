@@ -91,7 +91,7 @@ public class ScreenRecorder extends Thread {
 
             while (!mQuit.get()) {
                 int index = mEncoder.dequeueOutputBuffer(mBufferInfo, 0);
-                Log.i(TAG, "dequeue output buffer index=" + index);
+//                Log.i(TAG, "dequeue output buffer index=" + index);
                 if (index == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                     resetOutputFormat();
                 } else if (index == MediaCodec.INFO_TRY_AGAIN_LATER) {
@@ -138,7 +138,6 @@ public class ScreenRecorder extends Thread {
                 byte[] outBytes = new byte[mBufferInfo.size];
                 encodedData.get(outBytes);
                 mSocket.getOutputStream().write(outBytes);
-
             } catch (Exception e) {
                 e.printStackTrace();
                 mQuit.set(true);

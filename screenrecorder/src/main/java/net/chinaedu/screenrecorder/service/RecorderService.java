@@ -32,6 +32,7 @@ import java.net.Socket;
 
 public class RecorderService extends Service {
 
+    private static final String TAG = "RecorderService";
     private ScreenRecorder mRecorder;
     /**
      * 视频socket
@@ -140,10 +141,6 @@ public class RecorderService extends Service {
     }
 
     public boolean startRecorder() {
-        if (mMediaProjection == null) {
-            releaseClient();
-            return false;
-        }
         mRecorder = new ScreenRecorder(AppContext.getInstance().getWidth(),
                 AppContext.getInstance().getHeight(),
                 AppContext.getInstance().getBitRate(),
@@ -152,7 +149,7 @@ public class RecorderService extends Service {
         mRecorder.setOnStateListener(new ScreenRecorder.OnStateListener(){
             @Override
             public void onSocketClose() {
-                releaseClient();
+//                releaseClient();
                 hideTeacherLookingScreenTip();
             }
         });
@@ -219,6 +216,7 @@ public class RecorderService extends Service {
             while (!isInterrupted()){
                 try {
                     Socket socket = mVideoServerSocket.accept();
+                    Log.i(TAG, "socket:"+socket);
                     releaseClient();
                     mVideoSocket = socket;
                     initTeacherName();

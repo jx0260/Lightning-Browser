@@ -25,6 +25,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import acr.browser.lightning.R;
 import acr.browser.lightning.activity.LockScreenActivity;
@@ -40,7 +41,7 @@ public class LockScreenMonitorService extends IntentService {
 
     private Gson mGson = new Gson();
 
-    final static int RECEIVE_LENGTH = 1024;
+    final static int RECEIVE_LENGTH = 320;
 
     private DatagramSocket sendDataSocket;
 
@@ -55,6 +56,8 @@ public class LockScreenMonitorService extends IntentService {
 
     // 发送确认包 目标端口
     private int teacherPort = 29011;
+
+    LinkedBlockingQueue<byte[]> packetQueue = new LinkedBlockingQueue<>();
 
     public LockScreenMonitorService(){
         this("lockScreen-monitor-01");
@@ -75,17 +78,11 @@ public class LockScreenMonitorService extends IntentService {
 
         mWindowManager = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
         mLayoutInflater = LayoutInflater.from(this);
-
-        /*创建socket实例*/
-        try {
-            sendDataSocket = new DatagramSocket();
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+        startHandle();
         startMonitor();
     }
 
@@ -97,6 +94,8 @@ public class LockScreenMonitorService extends IntentService {
 
     private void startMonitor(){
         try {
+            sendDataSocket = new DatagramSocket();
+
             int localPort = 9999;
             DatagramSocket datagramSocket = new DatagramSocket(localPort);
 
@@ -104,9 +103,42 @@ public class LockScreenMonitorService extends IntentService {
             DatagramPacket datagramPacketToReceive = new DatagramPacket(dataBytes, RECEIVE_LENGTH);
             while(true){
                 datagramSocket.receive(datagramPacketToReceive);
-                Log.i(TAG, "收到数据包"+datagramPacketToReceive);
+
                 byte[] resultByteArray = new byte[datagramPacketToReceive.getLength()];
                 System.arraycopy(datagramPacketToReceive.getData(), 0, resultByteArray, 0, datagramPacketToReceive.getLength());
+
+                packetQueue.put(resultByteArray);
+                Log.i(TAG, "收到数据包内容："+resultByteArray+" 放入队列（size="+packetQueue.size()+")");
+            }
+        } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void startHandle(){
+        new HandlePacketThread("handleLockScreenPacket").start();
+    }
+
+    class HandlePacketThread extends Thread{
+        public HandlePacketThread(String name) {
+            super(name);
+        }
+
+        @Override
+        public void run() {
+            super.run();
+            while(true) {
+                byte[] resultByteArray = new byte[0];
+                try {
+                    resultByteArray = packetQueue.take();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    return;
+                }
 
                 ByteBuffer byteBuffer = ByteBuffer.wrap(resultByteArray);
                 int length = byteBuffer.getInt(0);
@@ -114,41 +146,53 @@ public class LockScreenMonitorService extends IntentService {
                 int serialId = byteBuffer.getInt(8);
                 int teacherIp = byteBuffer.getInt(12);
 
-                InetAddress teacherAddress = InetAddress.getByName(IpUtil.intToIp(teacherIp));
+                InetAddress teacherAddress = null;
+                try {
+                    teacherAddress = InetAddress.getByName(IpUtil.intToIp(teacherIp));
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                    return;
+                }
                 // 发送的数据包
                 DatagramPacket dataPacket = new DatagramPacket(resultByteArray, resultByteArray.length, teacherAddress, teacherPort);
-                sendDataSocket.send(dataPacket);
-                Log.i(TAG, "发送确认包(id "+ serialId +"):地址"+teacherAddress.toString()+" 端口"+teacherPort+" 命令号"+commandId);
+                try {
+                    sendDataSocket.send(dataPacket);
+                    Log.i(TAG, "发送确认包(id " + serialId + "):地址" + teacherAddress.toString() + " 端口" + teacherPort + " 命令号" + commandId);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return;
+                }
 
-                String dataStr = new String(resultByteArray, 16, resultByteArray.length-16);
-                if(commandId == CommandConstants.LOCK_SCREEN){
+                String dataStr = new String(resultByteArray, 16, resultByteArray.length - 16);
+                Log.i(TAG, "数据内容是："+dataStr);
+
+                if (commandId == CommandConstants.LOCK_SCREEN) {
                     try {
                         LockMsg lockMsg = mGson.fromJson(dataStr, LockMsg.class);
                         if (lockMsg.isLock()) {
-                            // 锁屏
-                            Log.i(TAG, "执行锁屏, 解锁口令是："+lockMsg.getToken());
-//                            showLock();
-                            if(!isLocked){
+                            if (!isLocked) {
+                                // 锁屏
+                                Log.i(TAG, "执行锁屏, 解锁口令是：" + lockMsg.getToken());
                                 showLockActivity(lockMsg.getToken());
+//                            showLock();
                                 isLocked = true;
                             }
                         } else {
-                            // 解锁
-                            Log.i(TAG, "执行解锁");
-//                            clearLock();
-                            if(isLocked){
+                            if (isLocked) {
+                                // 解锁
+                                Log.i(TAG, "执行解锁");
                                 hideLockActivity();
+//                            clearLock();
                                 isLocked = false;
                             }
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
+                        Log.i(TAG, "LockMsg json解析出错，没有执行锁屏或解锁操作。");
+                        Log.i(TAG, dataStr);
+                        Log.i(TAG, Log.getStackTraceString(e));
                     }
                 }
             }
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -16,6 +15,7 @@ import android.view.KeyEvent;
 import net.chinaedu.screenrecorder.service.RecorderService;
 
 /**
+ * 请求录屏权限 并给service发送结果
  * Created by qinyun on 2017/5/18.
  */
 
@@ -23,8 +23,6 @@ public class RequestRecorderActivity extends Activity {
     private static final int REQUEST_CODE = 1;
 
     private MediaProjectionManager mMediaProjectionManager;
-    private MediaProjection mMediaProjection;
-    private RecorderService mRecorderService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
