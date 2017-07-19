@@ -62,11 +62,11 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/dp40"
+                android:layout_height="@dimen/dp40"
                 android:layout_gravity="center_horizontal"
                 android:contentDescription="@null"
-                android:src="@mipmap/ic_mine_about_logo" />
+                android:src="@mipmap/ic_launcher" />
 
             <TextView
                 android:id="@+id/tv_splash_download_sheet_app_name"
@@ -74,7 +74,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
-                android:text="@string/app_name" />
+                android:singleLine="true"
+                android:text="@string/app_name_student_version" />
 
             <TextView
                 android:id="@+id/tv_splash_download_sheet_app_version"

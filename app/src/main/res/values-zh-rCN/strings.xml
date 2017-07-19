@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">101智慧课堂</string>
+    <string name="app_name_student_version">101智慧课堂（学生端）</string>
     <string name="action_new_tab">新建标签</string>
     <string name="action_share">分享页面</string>
     <string name="action_history">历史记录</string>

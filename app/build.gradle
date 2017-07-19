@@ -64,6 +64,15 @@ android {
         exclude 'META-INF/rxjava.properties'
         exclude '.readme'
     }
+
+    applicationVariants.all{variant ->
+        variant.outputs.each {output ->
+            def releaseTime = new Date().format("yyyy-MM-dd")
+            def file = output.outputFile
+            def filename = "101EClass_"+defaultConfig.versionName+"_"+releaseTime+".apk"
+            output.outputFile = new File(file.parent, filename)
+        }
+    }
 }
 
 dexcount {

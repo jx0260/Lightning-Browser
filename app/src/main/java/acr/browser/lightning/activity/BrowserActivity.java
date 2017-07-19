@@ -2394,8 +2394,8 @@ public abstract class BrowserActivity extends ThemableBrowserActivity implements
             public void onClick(DialogInterface dialog, int which) {
                 if (0 == which) {
                     mDownloadSheetRl.setVisibility(View.VISIBLE);
-                    mDownloadSheetAppVersionTv.setText(entity.getMobileVersion());
-                    mDownloadNotificationTitleTv.setText(getResources().getString(R.string.app_name) + "正在下载");
+                    mDownloadSheetAppVersionTv.setText("v"+entity.getMobileVersion());
+                    mDownloadNotificationTitleTv.setText(getResources().getString(R.string.app_name_student_version) + "正在下载");
                     Animation animation = AnimationUtils.loadAnimation(BrowserActivity.this, R.anim.slide_in_right);
                     animation.setAnimationListener(new Animation.AnimationListener() {
                         @Override

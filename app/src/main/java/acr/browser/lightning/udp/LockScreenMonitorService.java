@@ -1,6 +1,7 @@
 package acr.browser.lightning.udp;
 
 import android.app.IntentService;
+import android.app.mia.MiaMdmPolicyManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -59,6 +60,8 @@ public class LockScreenMonitorService extends IntentService {
 
     LinkedBlockingQueue<byte[]> packetQueue = new LinkedBlockingQueue<>();
 
+    private MiaMdmPolicyManager mpm;
+
     public LockScreenMonitorService(){
         this("lockScreen-monitor-01");
     }
@@ -77,6 +80,7 @@ public class LockScreenMonitorService extends IntentService {
         mService = this;
 
         mWindowManager = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+        mpm = new MiaMdmPolicyManager(getApplicationContext()); // 获取接口服务
         mLayoutInflater = LayoutInflater.from(this);
     }
 
@@ -173,6 +177,7 @@ public class LockScreenMonitorService extends IntentService {
                             if (!isLocked) {
                                 // 锁屏
                                 Log.i(TAG, "执行锁屏, 解锁口令是：" + lockMsg.getToken());
+                                mpm.setNavigaBar(true); //3个虚拟按键一起禁用
                                 showLockActivity(lockMsg.getToken());
 //                            showLock();
                                 isLocked = true;
@@ -181,6 +186,7 @@ public class LockScreenMonitorService extends IntentService {
                             if (isLocked) {
                                 // 解锁
                                 Log.i(TAG, "执行解锁");
+                                mpm.setNavigaBar(false); //3个虚拟按键一起启用
                                 hideLockActivity();
 //                            clearLock();
                                 isLocked = false;

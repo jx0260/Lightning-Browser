@@ -20,9 +20,8 @@ public class SafeDomainListManager {
 
     @Inject
     SafeDomainListManager() {
-        urlWhiteList.add("baidu.com");
-        urlWhiteList.add("chinaedu.com");
-        urlWhiteList.add("218.25.139.161");// http://218.25.139.161:10046/sunrise/login/login.do 默认主页
+//        urlWhiteList.add("chinaedu.com");
+//        urlWhiteList.add("218.25.139.161");// http://218.25.139.161:10046/sunrise/login/login.do 默认主页
     }
 
     public void addUrl(String url){
